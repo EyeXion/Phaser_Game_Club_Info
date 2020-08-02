@@ -1,0 +1,32 @@
+{
+  "name": "jeu-du_ppa",
+  "version": "1.0.0",
+  "description": "Game (Phaser 3 + TS), for IT club INSA Toulouse",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack --watch & live-server --port=8085"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EyeXion/Phaser_Game_Club_Info.git"
+  },
+  "keywords": [
+    "Phaser"
+  ],
+  "author": "Elies Tali",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EyeXion/Phaser_Game_Club_Info/issues"
+  },
+  "homepage": "https://github.com/EyeXion/Phaser_Game_Club_Info#readme",
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "phaser": "^3.24.1",
+    "ts-loader": "^8.0.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
