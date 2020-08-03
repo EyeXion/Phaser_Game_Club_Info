@@ -1,15 +1,23 @@
 import "phaser";
 
-const config: GameConfig = {
-  title: "Course du PPA",
+import { GameScene } from "./gameScene";
+const config: Phaser.Types.Core.GameConfig = {
+  title: "La course du PPA",
   width: 800,
   height: 600,
   parent: "game",
-  backgroundColor: "#18216D"
+  scene: [GameScene],
+  physics: {
+    default: "arcade",
+    arcade: {
+      debug: false
+    }
+  },
+  backgroundColor: "#000033"
 };
 
 export class PPAGame extends Phaser.Game {
-  constructor(config: GameConfig) {
+  constructor(config: Phaser.Types.Core.GameConfig) {
     super(config);
   }
 }
