@@ -1,5 +1,8 @@
 import "phaser";
 
+// CREDIT FOR THE SPRITES OF CHARACTER : Sithjester
+//Artwork created by Luis Zuno (@ansimuz) (background)
+
 import { GameScene } from "./gameScene";
 const config: Phaser.Types.Core.GameConfig = {
   title: "La course du PPA",
