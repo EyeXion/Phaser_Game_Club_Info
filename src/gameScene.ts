@@ -2,6 +2,9 @@ import "phaser";
 import { Game } from "phaser";
 
 export class GameScene extends Phaser.Scene {
+  obstacles : Phaser.Physics.Arcade.Group;
+  lastSpawnTime : number;
+  timeTilSpawn : number;
   timerJump : number;
   ground: Phaser.Physics.Arcade.StaticGroup;
   groundTexture: Phaser.GameObjects.TileSprite;
@@ -22,12 +25,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(params): void {
+    this.timeTilSpawn = Math.random()*2000 + 2000;
     this.score = 0;
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
   }
 
   preload(): void {
+    this.load.image('obs1', '../assets/obs10.png');
     this.load.image('ground', '../assets/ground.png');
     this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
     this.load.image('backgr_tree_front', '../assets/parallax-forest-front-trees.png');
@@ -91,26 +96,61 @@ export class GameScene extends Phaser.Scene {
     this.ppa.setGravityY(300);
     this.physics.add.collider(this.ppa, this.ground);
 
+    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
+    { font: '24px Arial Bold', fill: '#FBFBAC' });
+
+    this.obstacles = this.physics.add.group();
+    this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1');
+    this.lastSpawnTime = this.game.getTime();
+    this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this);
+
   }
 
   update(time): void {
+
+    var currentTime  : number = this.game.getTime();
+    this.obstacles.setVelocityX(-200);
+    this.score += 1;
+
+    this.info.destroy();
+    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
+    { font: '24px Arial Bold', fill: '#FBFBAC' });
+
+
+    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn){
+      this.obstacles.create(this.game.canvas.width + 50, 220, 'obs1');
+      this.lastSpawnTime = this.game.getTime();
+      this.timeTilSpawn = Math.random()*2000 + 2000;
+    }
 
 
     if (this.spaceKey.isDown) {
       console.log('Space is pressed');
       console.log(this.ppa.y);
       if (this.ppa.y == 224){
-        this.ppa.setVelocityY(-200);
+        this.ppa.setVelocityY(-230);
       }
     }
 
     if (this.downKey.isDown) {
       console.log('Down is pressed');
     }
+
+    this.obstacles.getChildren().forEach((child) => {
+     if  (child.body.position.x < 0){
+       child.destroy();
+     }
+    },this
+    )
+
     this.backgrLight.tilePositionX += 0.5;
     this.backgrTreesMid.tilePositionX += 0.5;
     this.backgrTreesFront.tilePositionX += 2;
     this.backgrTreesBack.tilePositionX += 0.25;
     this.groundTexture.tilePositionX += 2;
+  }
+
+  collide() : void {
+    this.scene.start('GameOverScene', {score : this.score});
   }
 };

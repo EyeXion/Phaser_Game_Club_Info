@@ -4,12 +4,14 @@ import "phaser";
 //Artwork created by Luis Zuno (@ansimuz) (background)
 
 import { GameScene } from "./gameScene";
+import { GameOverScene } from "./gameOverScene";
+
 const config: Phaser.Types.Core.GameConfig = {
   title: "La course du PPA",
   width: 800,
   height: 300,
   parent: "game",
-  scene: [GameScene],
+  scene: [GameScene,GameOverScene],
   physics: {
     default: "arcade",
     arcade: {
