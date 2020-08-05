@@ -32,7 +32,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   preload(): void {
-    this.load.image('obs1', '../assets/obs10.png');
+    this.load.image('obs1', '../assets/monster.png');
     this.load.image('ground', '../assets/ground.png');
     this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
     this.load.image('backgr_tree_front', '../assets/parallax-forest-front-trees.png');
@@ -107,7 +107,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
-
     var currentTime  : number = this.game.getTime();
     this.obstacles.setVelocityX(-200);
     this.score += 1;
@@ -122,7 +121,6 @@ export class GameScene extends Phaser.Scene {
       this.lastSpawnTime = this.game.getTime();
       this.timeTilSpawn = Math.random()*2000 + 2000;
     }
-
 
     if (this.spaceKey.isDown) {
       console.log('Space is pressed');
