@@ -7,7 +7,7 @@ import { GameScene } from "./gameScene";
 const config: Phaser.Types.Core.GameConfig = {
   title: "La course du PPA",
   width: 800,
-  height: 600,
+  height: 300,
   parent: "game",
   scene: [GameScene],
   physics: {

@@ -38,46 +38,48 @@ export class GameScene extends Phaser.Scene {
   create(): void {
 
     this.ground = this.physics.add.staticGroup();
-    this.ground.create(400,550,'ground');
+    this.ground.create(400, 275, 'ground');
 
-
-    this.backgrTreesBack = this.add.tileSprite(0,
-      this.game.canvas.height - this.textures.get('backgr_tree_back').getSourceImage().height,
+    this.backgrTreesBack = this.add.tileSprite(this.cameras.main.centerX,
+      this.cameras.main.centerY,
       this.game.canvas.width,
       this.textures.get('backgr_tree_back').getSourceImage().height,
-      'backgr_tree_back');
+      'backgr_tree_back').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_back').getSourceImage().height);
 
-    this.backgrLight = this.add.tileSprite(0,
-      this.game.canvas.height - this.textures.get('backgr_light').getSourceImage().height,
+    this.backgrLight = this.add.tileSprite(this.cameras.main.centerX,
+      this.cameras.main.centerY,
       this.game.canvas.width,
       this.textures.get('backgr_light').getSourceImage().height,
-      'backgr_light');
+      'backgr_light').setScale(1, this.cameras.main.height / this.textures.get('backgr_light').getSourceImage().height);
 
-    this.backgrTreesMid = this.add.tileSprite(0,
-      this.game.canvas.height - this.textures.get('backgr_tree_mid').getSourceImage().height,
+    this.backgrTreesMid = this.add.tileSprite(this.cameras.main.centerX,
+      this.cameras.main.centerY,
       this.game.canvas.width,
-      this.textures.get('backgr_tree_mid').getSourceImage().height,
-      'backgr_tree_mid');
+      this.textures.get('backgr_tree_back').getSourceImage().height,
+      'backgr_tree_mid').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_mid').getSourceImage().height);
 
-    this.backgrTreesFront = this.add.tileSprite(0,
-      this.game.canvas.height - this.textures.get('backgr_tree_front').getSourceImage().height,
+    this.backgrTreesFront = this.add.tileSprite(this.cameras.main.centerX,
+      this.cameras.main.centerY,
       this.game.canvas.width,
       this.textures.get('backgr_tree_front').getSourceImage().height,
-      'backgr_tree_front');
+      'backgr_tree_front').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_front').getSourceImage().height);
 
     this.groundTexture = this.add.tileSprite(400,
-      550,
+      275,
       this.textures.get('ground').getSourceImage().width,
       this.textures.get('ground').getSourceImage().height,
       'ground');
 
-    this.ppa = this.physics.add.sprite(200, 475, 'ppa', 8);
+    this.ppa = this.physics.add.sprite(200, 0, 'ppa', 8);
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
       { font: '24px Arial Bold', fill: '#FBFBAC' });
 
+
+
+
     const config: Phaser.Types.Animations.Animation = {
       key: 'walk',
-      frames: this.anims.generateFrameNames('ppa', { start: 9, end: 10 }),
+      frames: this.anims.generateFrameNames('ppa', { start: 9, end: 11 }),
       repeat: -1,
       frameRate: 5,
     };
@@ -86,7 +88,7 @@ export class GameScene extends Phaser.Scene {
 
     this.ppa.play('walk');
     this.ppa.setGravityY(300);
-    this.physics.add.collider(this.ppa,this.ground);
+    this.physics.add.collider(this.ppa, this.ground);
 
   }
 
