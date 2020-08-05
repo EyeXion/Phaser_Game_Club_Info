@@ -2,6 +2,7 @@ import "phaser";
 import { Game } from "phaser";
 
 export class GameScene extends Phaser.Scene {
+  timerJump : number;
   ground: Phaser.Physics.Arcade.StaticGroup;
   groundTexture: Phaser.GameObjects.TileSprite;
   info: Phaser.GameObjects.Text;
@@ -70,7 +71,7 @@ export class GameScene extends Phaser.Scene {
       this.textures.get('ground').getSourceImage().height,
       'ground');
 
-    this.ppa = this.physics.add.sprite(200, 0, 'ppa', 8);
+    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8);
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
       { font: '24px Arial Bold', fill: '#FBFBAC' });
 
@@ -93,16 +94,23 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
+
+
     if (this.spaceKey.isDown) {
       console.log('Space is pressed');
+      console.log(this.ppa.y);
+      if (this.ppa.y == 224){
+        this.ppa.setVelocityY(-200);
+      }
     }
+
     if (this.downKey.isDown) {
       console.log('Down is pressed');
     }
     this.backgrLight.tilePositionX += 0.5;
     this.backgrTreesMid.tilePositionX += 0.5;
-    this.backgrTreesFront.tilePositionX += 1;
+    this.backgrTreesFront.tilePositionX += 2;
     this.backgrTreesBack.tilePositionX += 0.25;
-    this.groundTexture.tilePositionX += 1;
+    this.groundTexture.tilePositionX += 2;
   }
 };
