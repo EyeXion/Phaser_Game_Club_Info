@@ -18,6 +18,8 @@ export class GameScene extends Phaser.Scene {
   backgrTreesBack: Phaser.GameObjects.TileSprite;
   backgrTreesFront: Phaser.GameObjects.TileSprite;
   backgrLight: Phaser.GameObjects.TileSprite;
+  arrayObstacles : Array<string>;
+  previousScore : number;
   constructor() {
     super({
       key: "GameScene"
@@ -29,9 +31,18 @@ export class GameScene extends Phaser.Scene {
     this.score = 0;
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+    this.arrayObstacles = ['obs1','obs2'];
+
+    if (params.hasOwnProperty('previousScore')){
+      this.previousScore = params.previousScore;
+    }
+    else{
+      this.previousScore = 0;
+    }
   }
 
   preload(): void {
+    this.load.image('obs2', '../assets/monster2.png');
     this.load.image('obs1', '../assets/monster.png');
     this.load.image('ground', '../assets/ground.png');
     this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
@@ -90,8 +101,9 @@ export class GameScene extends Phaser.Scene {
     this.ppa.play('walk');
     this.ppa.setGravityY(300);
     this.physics.add.collider(this.ppa, this.ground);
+    this.ppa.setSize(28,48);
 
-    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
+    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
     this.obstacles = this.physics.add.group();
@@ -107,20 +119,22 @@ export class GameScene extends Phaser.Scene {
     this.score += 1;
 
     this.info.destroy();
-    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
+    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString() + '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
 
     if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn){
-      this.obstacles.create(this.game.canvas.width + 50, 220, 'obs1');
+      let randomObstacles : number = (Math.random()*2 - 0.000);
+      randomObstacles = Math.floor(randomObstacles);
+      this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]);
       this.lastSpawnTime = this.game.getTime();
-      this.timeTilSpawn = Math.random()*2000 + 2000;
+      this.timeTilSpawn = Math.random()*2000 + 1000;
     }
 
     if (this.spaceKey.isDown) {
       console.log('Space is pressed');
       console.log(this.ppa.y);
-      if (this.ppa.y == 224){
+      if (this.ppa.y > 220){
         this.ppa.setVelocityY(-230);
       }
     }
@@ -144,6 +158,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   collide() : void {
-    this.scene.start('GameOverScene', {score : this.score});
+    this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
   }
 };
