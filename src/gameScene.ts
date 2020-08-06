@@ -77,11 +77,6 @@ export class GameScene extends Phaser.Scene {
       'ground');
 
     this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8);
-    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString(),
-      { font: '24px Arial Bold', fill: '#FBFBAC' });
-
-
-
 
     const config: Phaser.Types.Animations.Animation = {
       key: 'walk',
