@@ -99,7 +99,7 @@ export class GameScene extends Phaser.Scene {
     this.animWalk = this.anims.create(config);
 
     this.ppa.play('walk');
-    this.ppa.setGravityY(300);
+    this.ppa.setGravityY(1000);
     this.physics.add.collider(this.ppa, this.ground);
     this.ppa.setSize(28,48);
 
@@ -135,7 +135,7 @@ export class GameScene extends Phaser.Scene {
       console.log('Space is pressed');
       console.log(this.ppa.y);
       if (this.ppa.y > 220){
-        this.ppa.setVelocityY(-230);
+        this.ppa.setVelocityY(-500);
       }
     }
 
