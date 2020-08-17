@@ -1,7 +1,9 @@
 import "phaser";
 
 // CREDIT FOR THE SPRITES OF CHARACTER : Sithjester
-//Artwork created by Luis Zuno (@ansimuz) (background)
+//Artwork created by Luis Zuno (@ansimuz) (background) taken on OpenGameArt
+//Tea cup sprite by Fleurman taken on OpenGameArt
+//Heart sprite by DontMind8 taken on OpenGameArt
 
 import { GameScene } from "./gameScene";
 import { GameOverScene } from "./gameOverScene";
