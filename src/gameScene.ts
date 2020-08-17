@@ -49,7 +49,7 @@ export class GameScene extends Phaser.Scene {
     this.load.image('backgr_tree_front', '../assets/parallax-forest-front-trees.png');
     this.load.image('backgr_light', '../assets/parallax-forest-lights.png');
     this.load.image('backgr_tree_mid', '../assets/parallax-forest-middle-trees.png');
-    this.load.spritesheet('ppa', '../assets/charac.png', { frameWidth: 32, frameHeight: 52 });
+    this.load.spritesheet('ppa', '../assets/ppablouse.png', { frameWidth: 32, frameHeight: 48 });
   }
 
   create(): void {
@@ -101,7 +101,7 @@ export class GameScene extends Phaser.Scene {
     this.ppa.play('walk');
     this.ppa.setGravityY(1000);
     this.physics.add.collider(this.ppa, this.ground);
-    this.ppa.setSize(28,48);
+    this.ppa.setSize(28,45);
 
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
