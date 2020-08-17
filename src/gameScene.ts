@@ -3,6 +3,9 @@ import { Game } from "phaser";
 
 export class GameScene extends Phaser.Scene {
   obstacles : Phaser.Physics.Arcade.Group;
+  heart : Phaser.GameObjects.Image;
+  lifes : number;
+  coffee : Phaser.Physics.Arcade.Group;
   lastSpawnTime : number;
   timeTilSpawn : number;
   timerJump : number;
@@ -28,6 +31,7 @@ export class GameScene extends Phaser.Scene {
 
   init(params): void {
     this.timeTilSpawn = Math.random()*2000 + 2000;
+    this.lifes = 0;
     this.score = 0;
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
@@ -49,7 +53,9 @@ export class GameScene extends Phaser.Scene {
     this.load.image('backgr_tree_front', '../assets/parallax-forest-front-trees.png');
     this.load.image('backgr_light', '../assets/parallax-forest-lights.png');
     this.load.image('backgr_tree_mid', '../assets/parallax-forest-middle-trees.png');
+    this.load.image('heart','../assets/heart.png');
     this.load.spritesheet('ppa', '../assets/ppablouse.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('coffee','../assets/Coffee.png',  { frameWidth: 24, frameHeight: 24 });
   }
 
   create(): void {
@@ -106,29 +112,39 @@ export class GameScene extends Phaser.Scene {
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
-    this.obstacles = this.physics.add.group();
+    this.obstacles = this.physics.add.group({velocityX : -200,});
     this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1');
     this.lastSpawnTime = this.game.getTime();
     this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this);
 
+    this.coffee = this.physics.add.group({
+      setScale : {x : 2, y : 2},
+      allowGravity: false,
+      velocityX : -200,
+  });
   }
 
   update(time): void {
     var currentTime  : number = this.game.getTime();
-    this.obstacles.setVelocityX(-200);
     this.score += 1;
+
+    this.physics.overlap(this.coffee,this.ppa,this.getCoffee,null,this);
 
     this.info.destroy();
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString() + '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
 
-    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn){
+    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (180 > this.score || this.score > 220)){
       let randomObstacles : number = (Math.random()*2 - 0.000);
       randomObstacles = Math.floor(randomObstacles);
       this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]);
       this.lastSpawnTime = this.game.getTime();
       this.timeTilSpawn = Math.random()*2000 + 1000;
+    }
+
+    if (this.score == 200){
+      this.coffee.create(this.game.canvas.width + 50, 150,'coffee',3);
     }
 
     if (this.spaceKey.isDown) {
@@ -147,8 +163,7 @@ export class GameScene extends Phaser.Scene {
      if  (child.body.position.x < 0){
        child.destroy();
      }
-    },this
-    )
+    },this)
 
     this.backgrLight.tilePositionX += 0.5;
     this.backgrTreesMid.tilePositionX += 0.5;
@@ -158,6 +173,26 @@ export class GameScene extends Phaser.Scene {
   }
 
   collide() : void {
-    this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
+    if (this.lifes > 0){
+      this.obstacles.getChildren().forEach((child) => {
+        child.destroy();
+       },this)
+      this.lifes-= 1;
+      this.ppa.setVelocityX(0);
+      this.heart.destroy();
+    }
+    else{
+      this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
+    }
   }
+
+
+getCoffee(){
+  this.coffee.getChildren().forEach((child) => {
+    child.destroy();
+   },this);
+  this.lifes += 1;
+  console.log("coffee hit");
+  this.heart = this.add.image(this.game.canvas.width - 70, 40,'heart');
+}
 };
