@@ -2,6 +2,9 @@ import "phaser";
 import { Game } from "phaser";
 
 export class GameScene extends Phaser.Scene {
+  minSpawnTime : number;
+  factorSpawnTume : number;
+  speed : number;
   obstacles : Phaser.Physics.Arcade.Group;
   heart : Phaser.GameObjects.Image;
   lifes : number;
@@ -30,6 +33,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(params): void {
+    this.minSpawnTime = 1000;
+    this.factorSpawnTume = 2000;
+    this.speed = 0;
     this.timeTilSpawn = Math.random()*2000 + 2000;
     this.lifes = 0;
     this.score = 0;
@@ -112,7 +118,7 @@ export class GameScene extends Phaser.Scene {
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
-    this.obstacles = this.physics.add.group({velocityX : -200,});
+    this.obstacles = this.physics.add.group({velocityX : -200});
     this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1');
     this.lastSpawnTime = this.game.getTime();
     this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this);
@@ -127,6 +133,13 @@ export class GameScene extends Phaser.Scene {
   update(time): void {
     var currentTime  : number = this.game.getTime();
     this.score += 1;
+    if (this.speed < 300){
+      this.speed -= 0.07;
+      this.factorSpawnTume -= 0.2;
+      this.minSpawnTime -= 0.05;
+    }
+
+    this.obstacles.setVelocityX(-200 + this.speed);
 
     this.physics.overlap(this.coffee,this.ppa,this.getCoffee,null,this);
 
@@ -135,12 +148,12 @@ export class GameScene extends Phaser.Scene {
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
 
-    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (180 > this.score || this.score > 220)){
+    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn){
       let randomObstacles : number = (Math.random()*2 - 0.000);
       randomObstacles = Math.floor(randomObstacles);
       this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]);
       this.lastSpawnTime = this.game.getTime();
-      this.timeTilSpawn = Math.random()*2000 + 1000;
+      this.timeTilSpawn = Math.random()*this.factorSpawnTume + this.minSpawnTime;
     }
 
     if (this.score == 200){
