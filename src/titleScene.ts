@@ -11,6 +11,7 @@ export class TitleScene extends Phaser.Scene {
     gameLogo: Phaser.Physics.Arcade.Sprite;
     groundTexture: Phaser.GameObjects.TileSprite;
     floatTimer : number;
+    spaceKey: Phaser.Input.Keyboard.Key;
     constructor() {
         super({
             key: "TitleScene"
@@ -19,6 +20,7 @@ export class TitleScene extends Phaser.Scene {
 
     init(params): void {
         this.floatTimer = this.time.now;
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     }
 
@@ -70,13 +72,20 @@ export class TitleScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        this.gameLogo = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY - 50,'gameLogo').setScale(0.5,0.3);
-        this.gameLogo.setGravityY(350)
+        this.gameLogo = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY - 50,'gameLogo').setScale(0.4,0.4);
+        this.gameLogo.setVelocityY(-150);
+        this.gameLogo.setGravityY(350);
+        this.spaceKey.on('down',this.startGameSpace,this);
     }
 
     update(time): void {
         console.log(this.gameLogo.y);
         if (this.gameLogo.y >= this.cameras.main.centerY - 40){
-            this.gameLogo.setVelocityY(-200);
+            this.gameLogo.setVelocityY(-50);
         }
+    }
+
+    startGameSpace() : void{
+        this.scene.start('GameScene');
+    }
 }
