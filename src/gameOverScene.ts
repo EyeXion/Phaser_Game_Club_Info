@@ -7,6 +7,7 @@ export class GameOverScene extends Phaser.Scene{
     restartButton : Phaser.Physics.Arcade.Sprite;
     info: Phaser.GameObjects.Text;
     bestScore : number;
+    spaceKey: Phaser.Input.Keyboard.Key;
     constructor() {
         super({
           key: "GameOverScene"
@@ -14,6 +15,7 @@ export class GameOverScene extends Phaser.Scene{
     }
 
     init(params) : void {
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.score = params.score;
         if (this.score > params.bestScore){
             this.bestScore = params.score;
@@ -35,8 +37,14 @@ export class GameOverScene extends Phaser.Scene{
 
         this.info = this.add.text(10, 10, 'Course du PPA ! Best score  : ' + this.bestScore.toString(),
       { font: '24px Arial Bold', fill: '#FBFBAC' });
+
+      this.spaceKey.on('down',this.startGameSpace,this);
     }
 
     update(time): void {
+    }
+
+    startGameSpace() : void{
+        this.scene.start('GameScene', {previousScore : this.bestScore});
     }
 }
