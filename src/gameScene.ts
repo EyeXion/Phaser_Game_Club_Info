@@ -1,5 +1,6 @@
 import "phaser";
 import { Game } from "phaser";
+import { TitleScene } from "./titleScene";
 
 export class GameScene extends Phaser.Scene {
   minSpawnTime : number;
@@ -26,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   backgrLight: Phaser.GameObjects.TileSprite;
   arrayObstacles : Array<string>;
   previousScore : number;
+  isJumping : boolean;
   constructor() {
     super({
       key: "GameScene"
@@ -33,6 +35,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(params): void {
+    this.isJumping = false;
     this.minSpawnTime = 1000;
     this.factorSpawnTume = 2000;
     this.speed = 0;
@@ -111,7 +114,7 @@ export class GameScene extends Phaser.Scene {
     this.animWalk = this.anims.create(config);
 
     this.ppa.play('walk');
-    this.ppa.setGravityY(1000);
+    this.ppa.setGravityY(1200);
     this.physics.add.collider(this.ppa, this.ground);
     this.ppa.setSize(28,45);
 
@@ -131,6 +134,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
+    console.log(this.ppa.body.gravity.y);
     var currentTime  : number = this.game.getTime();
     this.score += 1;
     if (this.speed < 300){
@@ -160,17 +164,16 @@ export class GameScene extends Phaser.Scene {
       this.coffee.create(this.game.canvas.width + 50, 150,'coffee',3);
     }
 
-    if (this.spaceKey.isDown) {
-      console.log('Space is pressed');
-      console.log(this.ppa.y);
-      if (this.ppa.y > 220){
-        this.ppa.setVelocityY(-500);
-      }
+    if (this.spaceKey.isDown && this.ppa.body.touching.down) {
+        this.ppa.setVelocityY(-450);
+        this.time.addEvent({ delay: 275, callback: this.timerEnded, callbackScope: this});
+        this.isJumping = true;
     }
+    else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){
+      console.log("longer jump");
+      this.ppa.setVelocityY(-350);
+   }
 
-    if (this.downKey.isDown) {
-      console.log('Down is pressed');
-    }
 
     this.obstacles.getChildren().forEach((child) => {
      if  (child.body.position.x < 0){
@@ -207,5 +210,9 @@ getCoffee(){
   this.lifes += 1;
   console.log("coffee hit");
   this.heart = this.add.image(this.game.canvas.width - 70, 40,'heart');
+}
+
+timerEnded(){
+  this.isJumping = false;
 }
 };

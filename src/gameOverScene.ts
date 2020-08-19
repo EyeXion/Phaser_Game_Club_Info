@@ -45,6 +45,8 @@ export class GameOverScene extends Phaser.Scene{
     }
 
     startGameSpace() : void{
-        this.scene.start('GameScene', {previousScore : this.bestScore});
+        if (this.time.now > 3000){
+            this.scene.start('GameScene', {previousScore : this.bestScore});
+        }
     }
 }
