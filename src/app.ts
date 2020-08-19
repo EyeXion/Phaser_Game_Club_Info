@@ -4,16 +4,18 @@ import "phaser";
 //Artwork created by Luis Zuno (@ansimuz) (background) taken on OpenGameArt
 //Tea cup sprite by Fleurman taken on OpenGameArt
 //Heart sprite by DontMind8 taken on OpenGameArt
+// Play button taken on freepngimg.com
 
 import { GameScene } from "./gameScene";
 import { GameOverScene } from "./gameOverScene";
+import { TitleScene } from "./titleScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   title: "La course du PPA",
   width: 800,
   height: 300,
   parent: "game",
-  scene: [GameScene,GameOverScene],
+  scene: [TitleScene,GameScene,GameOverScene],
   physics: {
     default: "arcade",
     arcade: {
