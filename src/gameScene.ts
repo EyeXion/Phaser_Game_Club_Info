@@ -144,6 +144,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.obstacles.setVelocityX(-200 + this.speed);
+    this.coffee.setVelocityX(-200 + this.speed);
 
     this.physics.overlap(this.coffee,this.ppa,this.getCoffee,null,this);
 
@@ -152,7 +153,7 @@ export class GameScene extends Phaser.Scene {
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
 
-    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn){
+    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (this.score < 180 || this.score > 220)){
       let randomObstacles : number = (Math.random()*2 - 0.000);
       randomObstacles = Math.floor(randomObstacles);
       this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]);
@@ -165,13 +166,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) {
-        this.ppa.setVelocityY(-450);
+        this.ppa.setVelocityY(-400);
         this.time.addEvent({ delay: 275, callback: this.timerEnded, callbackScope: this});
         this.isJumping = true;
     }
     else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){
       console.log("longer jump");
-      this.ppa.setVelocityY(-350);
+      this.ppa.setVelocityY(-400);
    }
 
 
@@ -209,7 +210,7 @@ getCoffee(){
    },this);
   this.lifes += 1;
   console.log("coffee hit");
-  this.heart = this.add.image(this.game.canvas.width - 70, 40,'heart');
+  this.heart = this.add.image(this.game.canvas.width - 70, 60,'heart');
 }
 
 timerEnded(){
