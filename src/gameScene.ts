@@ -16,17 +16,13 @@ export class GameScene extends Phaser.Scene {
   timeTilSpawn : number; // time til next obstacle is created
   timerJump : number; // Allows the player to gauge their jump
   ground: Phaser.Physics.Arcade.StaticGroup; // Physical ground object
-  groundTexture: Phaser.GameObjects.TileSprite; // Ground, but only texture (need for the scrolling)
   info: Phaser.GameObjects.Text; // Text
   score: number; // stores the current score (not best)
   ppa: Phaser.Physics.Arcade.Sprite; // Player's object
   spaceKey: Phaser.Input.Keyboard.Key; // object representing the space key
   downKey: Phaser.Input.Keyboard.Key; // object representing the down key
   animWalk: Phaser.Animations.Animation | boolean; // Animation object for the player
-  backgrTreesMid: Phaser.GameObjects.TileSprite; // Parralax layer
-  backgrTreesBack: Phaser.GameObjects.TileSprite; // Parralax layer
-  backgrTreesFront: Phaser.GameObjects.TileSprite; // Parralax layer
-  backgrLight: Phaser.GameObjects.TileSprite; // Parralax layer
+  background: Phaser.GameObjects.TileSprite; //bg
   arrayObstacles : Array<string>; //Array containing images for the different obstacles
   previousScore : number; //best score yet
   isJumping : boolean; // used for gauging jumps
@@ -59,59 +55,29 @@ export class GameScene extends Phaser.Scene {
   preload(): void { //loading images and audio
     this.load.image('obs2', '../assets/monster2.png');
     this.load.image('obs1', '../assets/monster.png');
-    this.load.image('ground', '../assets/ground.png');
-    this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
-    this.load.image('backgr_tree_front', '../assets/parallax-forest-front-trees.png');
-    this.load.image('backgr_light', '../assets/parallax-forest-lights.png');
-    this.load.image('backgr_tree_mid', '../assets/parallax-forest-middle-trees.png');
+    this.load.image('backgr', '../assets/bg.png');
     this.load.image('heart','../assets/heart.png');
     this.load.spritesheet('ppa', '../assets/ppablouse.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('coffee','../assets/Coffee.png',  { frameWidth: 24, frameHeight: 24 });
     this.load.audio('jump','../assets/jump.wav');
-    this.load.audio('coffeeSound','../assets/coffee.wav');
-    this.load.audio('impact','../assets/impact.wav');
+    this.load.audio('coffeeSound','../assets/coffee.mp3');
+    this.load.audio('impact','../assets/impact.mp3');
     this.load.audio('mainSound','../assets/bgSoundMain.mp3');
   }
 
   create(): void {
 
     this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
-    this.ground.create(400, 275, 'ground');
+    this.ground.create(400, 300, 'ground');
     this.sound.play('mainSound',{volume : 0.2, loop : true});
 
     // all the blocs after that are and before the next comment are for the bg creation
-
-    this.backgrTreesBack = this.add.tileSprite(this.cameras.main.centerX,
+    this.background = this.add.tileSprite(this.cameras.main.centerX,
       this.cameras.main.centerY,
       this.game.canvas.width,
-      this.textures.get('backgr_tree_back').getSourceImage().height,
-      'backgr_tree_back').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_back').getSourceImage().height);
+      this.textures.get('backgr').getSourceImage().height,
+      'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
-    this.backgrLight = this.add.tileSprite(this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      this.game.canvas.width,
-      this.textures.get('backgr_light').getSourceImage().height,
-      'backgr_light').setScale(1, this.cameras.main.height / this.textures.get('backgr_light').getSourceImage().height);
-
-    this.backgrTreesMid = this.add.tileSprite(this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      this.game.canvas.width,
-      this.textures.get('backgr_tree_back').getSourceImage().height,
-      'backgr_tree_mid').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_mid').getSourceImage().height);
-
-    this.backgrTreesFront = this.add.tileSprite(this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      this.game.canvas.width,
-      this.textures.get('backgr_tree_front').getSourceImage().height,
-      'backgr_tree_front').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_front').getSourceImage().height);
-
-      // Adding ground texture (this one is visible and scrolling, only texture)
-
-    this.groundTexture = this.add.tileSprite(400,
-      275,
-      this.textures.get('ground').getSourceImage().width,
-      this.textures.get('ground').getSourceImage().height,
-      'ground');
 
     this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8); // Creating character
 
@@ -133,7 +99,7 @@ export class GameScene extends Phaser.Scene {
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
     this.obstacles = this.physics.add.group({velocityX : -250}); //Creation on obstacles' group
-    this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1'); // create first obstacle
+    this.obstacles.create(this.game.canvas.width - 50 , 245, 'obs1'); // create first obstacle
     this.lastSpawnTime = this.game.getTime(); 
     this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this); // add collider beteween obstacles and player
 
@@ -167,7 +133,7 @@ export class GameScene extends Phaser.Scene {
     if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (this.score < 180 || this.score > 220)){ //spawn obsatacles if time ok
       let randomObstacles : number = (Math.random()*2 - 0.000);
       randomObstacles = Math.floor(randomObstacles); // generate random number to choose between obstacles frames
-      this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]); // create obstacle
+      this.obstacles.create(this.game.canvas.width + 50, 245, this.arrayObstacles[randomObstacles]); // create obstacle
       this.lastSpawnTime = this.game.getTime();
       this.timeTilSpawn = Math.random()*this.factorSpawnTume + this.minSpawnTime;
     }
@@ -199,11 +165,7 @@ export class GameScene extends Phaser.Scene {
      }
     },this)
 
-    this.backgrLight.tilePositionX += 0.5; //Parallax and ground scrolling
-    this.backgrTreesMid.tilePositionX += 0.5;
-    this.backgrTreesFront.tilePositionX += 2;
-    this.backgrTreesBack.tilePositionX += 0.25;
-    this.groundTexture.tilePositionX += 2;
+    this.background.tilePositionX += 2; //Parallax and ground scrolling
   }
 
   collide() : void { // method called when obstacle collide with character

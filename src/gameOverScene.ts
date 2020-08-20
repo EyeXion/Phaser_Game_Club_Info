@@ -33,6 +33,13 @@ export class GameOverScene extends Phaser.Scene{
 
     create() : void{ 
         //create restart button and add eventlistener
+
+        this.background = this.add.tileSprite(this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            this.game.canvas.width,
+            this.textures.get('backgr').getSourceImage().height,
+            'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
+            
         this.sound.play('deathSong');
         this.restartButton = this.physics.add.sprite(this.cameras.main.centerX,this.cameras.main.centerY,'buttonRestart').setInteractive().setScale(0.1,0.1); 
         this.restartButton.on('pointerdown', () => {
