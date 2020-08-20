@@ -50,7 +50,7 @@ export class TitleScene extends Phaser.Scene {
         this.gameLogo.setGravityY(350);
         this.spaceKey.on('down',this.startGameSpace,this); // is space key pressed, event and callback function called
 
-        this.sound.play('launch');
+        this.sound.play('launch',{volume : 0.5});
     }
 
     update(time): void {
