@@ -1,17 +1,17 @@
 import "phaser";
 import { Game } from "phaser";
 
-
+/*########################## TITLE SCENE ############################### */
 export class TitleScene extends Phaser.Scene {
-    backgrTreesMid: Phaser.GameObjects.TileSprite;
-    backgrTreesBack: Phaser.GameObjects.TileSprite;
-    backgrTreesFront: Phaser.GameObjects.TileSprite;
-    backgrLight: Phaser.GameObjects.TileSprite;
-    playButton: Phaser.Physics.Arcade.Sprite;
-    gameLogo: Phaser.Physics.Arcade.Sprite;
-    groundTexture: Phaser.GameObjects.TileSprite;
-    floatTimer : number;
-    spaceKey: Phaser.Input.Keyboard.Key;
+    backgrTreesMid: Phaser.GameObjects.TileSprite; // background
+    backgrTreesBack: Phaser.GameObjects.TileSprite; // background
+    backgrTreesFront: Phaser.GameObjects.TileSprite; // background
+    backgrLight: Phaser.GameObjects.TileSprite; // background
+    playButton: Phaser.Physics.Arcade.Sprite; // play button
+    gameLogo: Phaser.Physics.Arcade.Sprite; // Game logo
+    groundTexture: Phaser.GameObjects.TileSprite; // ground texture
+    floatTimer : number; // timer used floating effect logo
+    spaceKey: Phaser.Input.Keyboard.Key; // object for space key
     constructor() {
         super({
             key: "TitleScene"
@@ -23,8 +23,8 @@ export class TitleScene extends Phaser.Scene {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     }
-
-    preload(): void {
+ 
+    preload(): void { // load images
         this.load.image('gameLogo','../assets/gameLogo.png');
         this.load.image('buttonPlay', '../assets/play.png');
         this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
@@ -36,6 +36,7 @@ export class TitleScene extends Phaser.Scene {
 
     create(): void {
 
+         // create sprites
         this.backgrTreesBack = this.add.tileSprite(this.cameras.main.centerX,
             this.cameras.main.centerY,
             this.game.canvas.width,
@@ -68,24 +69,23 @@ export class TitleScene extends Phaser.Scene {
 
 
         this.playButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.03, 0.03);
-        this.playButton.on('pointerdown', () => {
+        this.playButton.on('pointerdown', () => { // add event on click on button -> go to main scene
             this.scene.start('GameScene');
         });
 
         this.gameLogo = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY - 50,'gameLogo').setScale(0.4,0.4);
-        this.gameLogo.setVelocityY(-150);
+        this.gameLogo.setVelocityY(-150); // jump of logo at the beginning
         this.gameLogo.setGravityY(350);
-        this.spaceKey.on('down',this.startGameSpace,this);
+        this.spaceKey.on('down',this.startGameSpace,this); // is space key pressed, event and callback function called
     }
 
     update(time): void {
-        console.log(this.gameLogo.y);
-        if (this.gameLogo.y >= this.cameras.main.centerY - 40){
+        if (this.gameLogo.y >= this.cameras.main.centerY - 40){ // Floating effect game logo
             this.gameLogo.setVelocityY(-50);
         }
     }
 
-    startGameSpace() : void{
+    startGameSpace() : void{ // callback function space key down
         this.scene.start('GameScene');
     }
 }

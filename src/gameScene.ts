@@ -2,32 +2,34 @@ import "phaser";
 import { Game } from "phaser";
 import { TitleScene } from "./titleScene";
 
+/* ###########################   MAIN GAME SCENE   #######################"""" */
+
 export class GameScene extends Phaser.Scene {
-  minSpawnTime : number;
-  factorSpawnTume : number;
-  speed : number;
-  obstacles : Phaser.Physics.Arcade.Group;
-  heart : Phaser.GameObjects.Image;
-  lifes : number;
-  coffee : Phaser.Physics.Arcade.Group;
-  lastSpawnTime : number;
-  timeTilSpawn : number;
-  timerJump : number;
-  ground: Phaser.Physics.Arcade.StaticGroup;
-  groundTexture: Phaser.GameObjects.TileSprite;
-  info: Phaser.GameObjects.Text;
-  score: number;
-  ppa: Phaser.Physics.Arcade.Sprite;
-  spaceKey: Phaser.Input.Keyboard.Key;
-  downKey: Phaser.Input.Keyboard.Key;
-  animWalk: Phaser.Animations.Animation | boolean;
-  backgrTreesMid: Phaser.GameObjects.TileSprite;
-  backgrTreesBack: Phaser.GameObjects.TileSprite;
-  backgrTreesFront: Phaser.GameObjects.TileSprite;
-  backgrLight: Phaser.GameObjects.TileSprite;
-  arrayObstacles : Array<string>;
-  previousScore : number;
-  isJumping : boolean;
+  speed : number; // Changes every frame. Allows the acceleration of the game
+  obstacles : Phaser.Physics.Arcade.Group; // Group of obstacles
+  heart : Phaser.GameObjects.Image; // Image for the heart
+  lifes : number; //Number of lifes
+  coffee : Phaser.Physics.Arcade.Group; // Group for the coffees
+  minSpawnTime : number;   //Min time between 2 obstacles
+  factorSpawnTume : number; // Multîplying factor in front of the random (for spawning)
+  lastSpawnTime : number; //stores the time the last obstacle has been created
+  timeTilSpawn : number; // time til next obstacle is created
+  timerJump : number; // Allows the player to gauge their jump
+  ground: Phaser.Physics.Arcade.StaticGroup; // Physical ground object
+  groundTexture: Phaser.GameObjects.TileSprite; // Ground, but only texture (need for the scrolling)
+  info: Phaser.GameObjects.Text; // Text
+  score: number; // stores the current score (not best)
+  ppa: Phaser.Physics.Arcade.Sprite; // Player's object
+  spaceKey: Phaser.Input.Keyboard.Key; // object representing the space key
+  downKey: Phaser.Input.Keyboard.Key; // object representing the down key
+  animWalk: Phaser.Animations.Animation | boolean; // Animation object for the player
+  backgrTreesMid: Phaser.GameObjects.TileSprite; // Parralax layer
+  backgrTreesBack: Phaser.GameObjects.TileSprite; // Parralax layer
+  backgrTreesFront: Phaser.GameObjects.TileSprite; // Parralax layer
+  backgrLight: Phaser.GameObjects.TileSprite; // Parralax layer
+  arrayObstacles : Array<string>; //Array containing images for the different obstacles
+  previousScore : number; //best score yet
+  isJumping : boolean; // used for gauging jumps
   constructor() {
     super({
       key: "GameScene"
@@ -36,17 +38,17 @@ export class GameScene extends Phaser.Scene {
 
   init(params): void {
     this.isJumping = false;
-    this.minSpawnTime = 1000;
+    this.minSpawnTime = 1000; // at start, 1 sec min between enemies
     this.factorSpawnTume = 2000;
-    this.speed = 0;
+    this.speed = 0; // no added speed
     this.timeTilSpawn = Math.random()*2000 + 2000;
     this.lifes = 0;
     this.score = 0;
     this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-    this.arrayObstacles = ['obs1','obs2'];
+    this.arrayObstacles = ['obs1','obs2']; // here to add different obstacles
 
-    if (params.hasOwnProperty('previousScore')){
+    if (params.hasOwnProperty('previousScore')){ //load best score from GameOverScene (if exists)
       this.previousScore = params.previousScore;
     }
     else{
@@ -54,7 +56,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  preload(): void {
+  preload(): void { //loading images
     this.load.image('obs2', '../assets/monster2.png');
     this.load.image('obs1', '../assets/monster.png');
     this.load.image('ground', '../assets/ground.png');
@@ -69,8 +71,10 @@ export class GameScene extends Phaser.Scene {
 
   create(): void {
 
-    this.ground = this.physics.add.staticGroup();
+    this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
     this.ground.create(400, 275, 'ground');
+
+    // all the blocs after that are and before the next comment are for the bg creation
 
     this.backgrTreesBack = this.add.tileSprite(this.cameras.main.centerX,
       this.cameras.main.centerY,
@@ -96,37 +100,39 @@ export class GameScene extends Phaser.Scene {
       this.textures.get('backgr_tree_front').getSourceImage().height,
       'backgr_tree_front').setScale(1, this.cameras.main.height / this.textures.get('backgr_tree_front').getSourceImage().height);
 
+      // Adding ground texture (this one is visible and scrolling, only texture)
+
     this.groundTexture = this.add.tileSprite(400,
       275,
       this.textures.get('ground').getSourceImage().width,
       this.textures.get('ground').getSourceImage().height,
       'ground');
 
-    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8);
+    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8); // Creating character
 
-    const config: Phaser.Types.Animations.Animation = {
+    const config: Phaser.Types.Animations.Animation = { // config of the animation object
       key: 'walk',
       frames: this.anims.generateFrameNames('ppa', { start: 9, end: 11 }),
       repeat: -1,
       frameRate: 5,
     };
 
-    this.animWalk = this.anims.create(config);
+    this.animWalk = this.anims.create(config); // creation of the animation for te character
 
     this.ppa.play('walk');
-    this.ppa.setGravityY(1200);
-    this.physics.add.collider(this.ppa, this.ground);
-    this.ppa.setSize(28,45);
+    this.ppa.setGravityY(1200); // set gravity for the character
+    this.physics.add.collider(this.ppa, this.ground); // add collider between ground (physics) and character
+    this.ppa.setSize(28,45); // collider size for the character
 
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
-    this.obstacles = this.physics.add.group({velocityX : -200});
-    this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1');
-    this.lastSpawnTime = this.game.getTime();
-    this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this);
+    this.obstacles = this.physics.add.group({velocityX : -200}); //Creation on obstacles' group
+    this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1'); // create first obstacle
+    this.lastSpawnTime = this.game.getTime(); 
+    this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this); // add collider beteween obstacles and player
 
-    this.coffee = this.physics.add.group({
+    this.coffee = this.physics.add.group({ // config for the coffee group
       setScale : {x : 2, y : 2},
       allowGravity: false,
       velocityX : -200,
@@ -134,63 +140,63 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(time): void {
-    console.log(this.ppa.body.gravity.y);
-    var currentTime  : number = this.game.getTime();
-    this.score += 1;
-    if (this.speed < 300){
+    var currentTime  : number = this.game.getTime(); // used to know the time to spawn
+    this.score += 1; // increment score
+
+    if (this.speed < 300){ // acceleration of game up to a certain speed
       this.speed -= 0.07;
-      this.factorSpawnTume -= 0.2;
+      this.factorSpawnTume -= 0.2; // diminish the time obstacles spawn (otherwise the game is too easy at the end)
       this.minSpawnTime -= 0.05;
     }
 
-    this.obstacles.setVelocityX(-200 + this.speed);
+    this.obstacles.setVelocityX(-200 + this.speed); // update of speed for obstacles and coffee group 
     this.coffee.setVelocityX(-200 + this.speed);
 
-    this.physics.overlap(this.coffee,this.ppa,this.getCoffee,null,this);
+    this.physics.overlap(this.coffee,this.ppa,this.getCoffee,null,this); // event listener overlap character and coffee
 
     this.info.destroy();
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString() + '                Best Score : ' + this.previousScore.toString(),
-    { font: '24px Arial Bold', fill: '#FBFBAC' });
+    { font: '24px Arial Bold', fill: '#FBFBAC' }); //update text
 
 
-    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (this.score < 180 || this.score > 220)){
+    if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (this.score < 180 || this.score > 220)){ //spawn obsatacles if time ok
       let randomObstacles : number = (Math.random()*2 - 0.000);
-      randomObstacles = Math.floor(randomObstacles);
-      this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]);
+      randomObstacles = Math.floor(randomObstacles); // generate random number to choose between obstacles frames
+      this.obstacles.create(this.game.canvas.width + 50, 220, this.arrayObstacles[randomObstacles]); // create obstacle
       this.lastSpawnTime = this.game.getTime();
       this.timeTilSpawn = Math.random()*this.factorSpawnTume + this.minSpawnTime;
     }
 
-    if (this.score == 200){
+    if (this.score == 200){ // create coffee
       this.coffee.create(this.game.canvas.width + 50, 150,'coffee',3);
     }
 
-    if (this.spaceKey.isDown && this.ppa.body.touching.down) {
+    if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
         this.ppa.setVelocityY(-400);
-        this.time.addEvent({ delay: 275, callback: this.timerEnded, callbackScope: this});
+        this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this}); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
         this.isJumping = true;
     }
-    else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){
+    else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){ // if space key still down and delay has not passed, jump is higher
       console.log("longer jump");
       this.ppa.setVelocityY(-400);
    }
 
 
-    this.obstacles.getChildren().forEach((child) => {
+    this.obstacles.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
      if  (child.body.position.x < 0){
        child.destroy();
      }
     },this)
 
-    this.backgrLight.tilePositionX += 0.5;
+    this.backgrLight.tilePositionX += 0.5; //Parallax and ground scrolling
     this.backgrTreesMid.tilePositionX += 0.5;
     this.backgrTreesFront.tilePositionX += 2;
     this.backgrTreesBack.tilePositionX += 0.25;
     this.groundTexture.tilePositionX += 2;
   }
 
-  collide() : void {
-    if (this.lifes > 0){
+  collide() : void { // method called when obstacle collide with character
+    if (this.lifes > 0){ // if lifes remaining, destroy obstacle and decrement lifes
       this.obstacles.getChildren().forEach((child) => {
         child.destroy();
        },this)
@@ -198,22 +204,22 @@ export class GameScene extends Phaser.Scene {
       this.ppa.setVelocityX(0);
       this.heart.destroy();
     }
-    else{
+    else{ //else, end game and go the GameOverScene
       this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
     }
   }
 
 
-getCoffee(){
-  this.coffee.getChildren().forEach((child) => {
+getCoffee(){ // method called when overlap coffee and character
+  this.coffee.getChildren().forEach((child) => { // destroy coffee
     child.destroy();
    },this);
-  this.lifes += 1;
+  this.lifes += 1; // add life
   console.log("coffee hit");
-  this.heart = this.add.image(this.game.canvas.width - 70, 60,'heart');
+  this.heart = this.add.image(this.game.canvas.width - 70, 60,'heart'); // add heart
 }
 
-timerEnded(){
+timerEnded(){ // eventTimer for jump (delay)
   this.isJumping = false;
 }
 };
