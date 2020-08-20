@@ -70,12 +70,14 @@ export class GameScene extends Phaser.Scene {
     this.load.audio('jump','../assets/jump.wav');
     this.load.audio('coffeeSound','../assets/coffee.wav');
     this.load.audio('impact','../assets/impact.wav');
+    this.load.audio('mainSound','../assets/bgSoundMain.mp3');
   }
 
   create(): void {
 
     this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
     this.ground.create(400, 275, 'ground');
+    this.sound.play('mainSound',{volume : 0.2, loop : true});
 
     // all the blocs after that are and before the next comment are for the bg creation
 
@@ -176,7 +178,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
         this.ppa.setVelocityY(-400);
-        this.sound.play('jump');
+        this.sound.play('jump',{volume : 0.2});
         this.ppa.anims.pause(this.ppa.anims.currentFrame); // stops animation while jumping
         this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this}); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
         this.isJumping = true;
@@ -215,6 +217,7 @@ export class GameScene extends Phaser.Scene {
     }
     else{ //else, end game and go the GameOverScene
       this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
+      this.sound.stopAll();
     }
     this.sound.play('impact'); // play sound
   }
