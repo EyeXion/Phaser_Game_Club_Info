@@ -10,8 +10,9 @@ export class GameOverScene extends Phaser.Scene {
     bestScore: number; // best score of all games
     spaceKey: Phaser.Input.Keyboard.Key; // object for space key
     background: Phaser.GameObjects.TileSprite; //bg
-    playButton: Phaser.Physics.Arcade.Sprite; // play button
     retryLogo: Phaser.Physics.Arcade.Sprite; // Game logo
+    soundControl: Phaser.Physics.Arcade.Sprite;
+    isSoundOn: boolean;
     constructor() {
         super({
             key: "GameOverScene"
@@ -27,6 +28,7 @@ export class GameOverScene extends Phaser.Scene {
         else {
             this.bestScore = params.bestScore;
         }
+        this.isSoundOn = params.isSoundOn;
     }
 
     preload(): void { //load images and audio
@@ -36,12 +38,13 @@ export class GameOverScene extends Phaser.Scene {
         this.load.image('bestScore', '../assets/highScore.png');
         this.load.image('buttonPlay', '../assets/play.png');
         this.load.bitmapFont('myfont', '../assets/font.png', '../assets/font.fnt');
+        this.load.image('soundOn', '../assets/musicOn.png');
+        this.load.image('soundOff', '../assets/musicOff.png');
     }
 
     create(): void {
         //create restart button and add eventlistener
 
-        this.sound.play('deathSong');
         this.sound.resumeAll();
         this.background = this.add.tileSprite(this.cameras.main.centerX,
             this.cameras.main.centerY,
@@ -54,22 +57,57 @@ export class GameOverScene extends Phaser.Scene {
             this.scene.start('GameScene');
         });
 
-        this.add.image(130, 30, 'bestScore').setScale(0.22,0.22);
+        this.add.image(130, 30, 'bestScore').setScale(0.22, 0.22);
 
-        this.info = this.add.bitmapText(270, 10, 'myfont',this.bestScore.toString()); // display text
+        this.info = this.add.bitmapText(270, 10, 'myfont', this.bestScore.toString()); // display text
 
         this.spaceKey.on('down', this.startGameSpace, this); // add event listener space key down (restart game)
 
         this.add.image(this.cameras.main.centerX, this.cameras.main.centerY - 40, 'retryLogo').setScale(0.4, 0.4);
+        this.sound.play('deathSong');
+        if (this.isSoundOn) {
+            this.soundControl = this.physics.add.sprite(20, 100, 'soundOn').setInteractive();
+        }
+        else {
+            this.sound.stopAll();
+            this.soundControl = this.physics.add.sprite(20, 100, 'soundOff').setInteractive();
+        }
+
+        this.soundControl.on('pointerdown', () => { // add event on click on button -> sound on or off
+            if (this.isSoundOn) {
+                this.isSoundOn = false;
+                this.soundControl.setTexture('soundOff');
+                this.sound.stopAll();
+            }
+            else {
+                this.isSoundOn = true;
+                this.soundControl.setTexture('soundOn');
+            }
+        });
     }
 
     update(time): void {
+        this.restartButton.on('pointerover', () => {
+            this.restartButton.setScale(0.04, 0.04);
+        })
+
+        this.restartButton.on('pointerout', () => {
+            this.restartButton.setScale(0.03, 0.03);
+        })
+
+        this.soundControl.on('pointerover', () => { // hover effect on music controller
+            this.soundControl.setScale(1.2, 1.2);
+        })
+
+        this.soundControl.on('pointerout', () => {
+            this.soundControl.setScale(1, 1);
+        })
     }
 
     startGameSpace(): void { // callback function space key down
         if (this.time.now > 3000) {
             this.sound.removeByKey('deathSong');
-            this.scene.start('GameScene', { previousScore: this.bestScore });
+            this.scene.start('GameScene', { previousScore: this.bestScore, isSoundOn: this.isSoundOn });
         }
     }
 }
