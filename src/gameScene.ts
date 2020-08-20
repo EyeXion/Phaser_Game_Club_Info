@@ -127,7 +127,7 @@ export class GameScene extends Phaser.Scene {
     this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString()+ '                Best Score : ' + this.previousScore.toString(),
     { font: '24px Arial Bold', fill: '#FBFBAC' });
 
-    this.obstacles = this.physics.add.group({velocityX : -200}); //Creation on obstacles' group
+    this.obstacles = this.physics.add.group({velocityX : -250}); //Creation on obstacles' group
     this.obstacles.create(this.game.canvas.width - 50 , 220, 'obs1'); // create first obstacle
     this.lastSpawnTime = this.game.getTime(); 
     this.physics.add.collider(this.ppa,this.obstacles,this.collide,null,this); // add collider beteween obstacles and player
@@ -135,7 +135,7 @@ export class GameScene extends Phaser.Scene {
     this.coffee = this.physics.add.group({ // config for the coffee group
       setScale : {x : 2, y : 2},
       allowGravity: false,
-      velocityX : -200,
+      velocityX : -250,
   });
   }
 
@@ -143,7 +143,7 @@ export class GameScene extends Phaser.Scene {
     var currentTime  : number = this.game.getTime(); // used to know the time to spawn
     this.score += 1; // increment score
 
-    if (this.speed < 300){ // acceleration of game up to a certain speed
+    if (this.speed < 250){ // acceleration of game up to a certain speed
       this.speed -= 0.07;
       this.factorSpawnTume -= 0.2; // diminish the time obstacles spawn (otherwise the game is too easy at the end)
       this.minSpawnTime -= 0.05;
