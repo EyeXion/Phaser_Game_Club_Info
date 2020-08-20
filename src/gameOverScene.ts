@@ -26,14 +26,17 @@ export class GameOverScene extends Phaser.Scene{
         }
     }
 
-    preload() :void { //load images
+    preload() :void { //load images and audio
         this.load.image('buttonRestart', '../assets/buttonRestart.png');
+        this.load.audio('deathSong','../assets/deathSong.mp3');
     }
 
     create() : void{ 
         //create restart button and add eventlistener
+        this.sound.play('deathSong');
         this.restartButton = this.physics.add.sprite(this.cameras.main.centerX,this.cameras.main.centerY,'buttonRestart').setInteractive().setScale(0.1,0.1); 
         this.restartButton.on('pointerdown', () => {
+            this.sound.stopAll();
             this.scene.start('GameScene', {previousScore : this.bestScore});
         });
 
@@ -49,6 +52,7 @@ export class GameOverScene extends Phaser.Scene{
     startGameSpace() : void{ // callback function space key down
         if (this.time.now > 3000){
             this.scene.start('GameScene', {previousScore : this.bestScore});
+            this.sound.stopAll();
         }
     }
 }
