@@ -53,9 +53,7 @@ export class GameOverScene extends Phaser.Scene {
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
         this.restartButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.03, 0.03);
-        this.restartButton.on('pointerdown', () => { // add event on click on button -> go to main scene
-            this.scene.start('GameScene');
-        });
+        this.restartButton.on('pointerdown', this.startGameSpace,this);  // add event on click on button -> go to main scene
 
         this.add.image(130, 30, 'bestScore').setScale(0.22, 0.22);
 

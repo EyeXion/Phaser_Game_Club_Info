@@ -46,9 +46,7 @@ export class TitleScene extends Phaser.Scene {
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
         this.playButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.03, 0.03);
-        this.playButton.on('pointerdown', () => { // add event on click on button -> go to main scene
-            this.scene.start('GameScene');
-        });
+        this.playButton.on('pointerdown', this.startGameSpace,this); // add event on click on button -> go to main scene
 
         this.soundControl = this.physics.add.sprite(20, 100, 'soundOn').setInteractive();
         this.soundControl.on('pointerdown', () => { // add event on click on button -> sound on or off
@@ -79,23 +77,24 @@ export class TitleScene extends Phaser.Scene {
 
         this.playButton.on('pointerover', () => { // hover effect on button
             this.playButton.setScale(0.04, 0.04);
-        })
+        });
 
         this.playButton.on('pointerout', () => {
             this.playButton.setScale(0.03, 0.03);
-        })
+        });
 
         this.soundControl.on('pointerover', () => { // hover effect on music controller
             this.soundControl.setScale(1.2, 1.2);
-        })
+        });
 
         this.soundControl.on('pointerout', () => {
             this.soundControl.setScale(1, 1);
-        })
+        });
     }
 
-    startGameSpace(): void { // callback function space key down
+    startGameSpace(): void { // callback function space key down or button hit
         this.sound.removeAll();
-        this.scene.start('GameScene', { isSoundOn: this.isSoundOn });
+        console.log(this.isSoundOn);
+        this.scene.start('GameScene', { isSoundOn : this.isSoundOn });
     }
 }
