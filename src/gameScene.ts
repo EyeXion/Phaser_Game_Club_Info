@@ -119,7 +119,7 @@ export class GameScene extends Phaser.Scene {
 
     this.animWalk = this.anims.create(config); // creation of the animation for te character
 
-    this.ppa.play('walk');
+    this.ppa.anims.play('walk');
     this.ppa.setGravityY(1200); // set gravity for the character
     this.physics.add.collider(this.ppa, this.ground); // add collider between ground (physics) and character
     this.ppa.setSize(28,45); // collider size for the character
@@ -173,12 +173,17 @@ export class GameScene extends Phaser.Scene {
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
         this.ppa.setVelocityY(-400);
+        this.ppa.anims.pause(this.ppa.anims.currentFrame); // stops animation while jumping
         this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this}); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
         this.isJumping = true;
     }
     else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){ // if space key still down and delay has not passed, jump is higher
-      console.log("longer jump");
       this.ppa.setVelocityY(-400);
+   }
+
+   else if (this.ppa.body.touching.down && this.ppa.anims.isPaused){ // restart animation after end of jump
+     console.log("animation restart");
+     this.ppa.anims.restart();
    }
 
 
