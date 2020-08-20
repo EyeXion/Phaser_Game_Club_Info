@@ -56,7 +56,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  preload(): void { //loading images
+  preload(): void { //loading images and audio
     this.load.image('obs2', '../assets/monster2.png');
     this.load.image('obs1', '../assets/monster.png');
     this.load.image('ground', '../assets/ground.png');
@@ -67,6 +67,9 @@ export class GameScene extends Phaser.Scene {
     this.load.image('heart','../assets/heart.png');
     this.load.spritesheet('ppa', '../assets/ppablouse.png', { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('coffee','../assets/Coffee.png',  { frameWidth: 24, frameHeight: 24 });
+    this.load.audio('jump','../assets/jump.wav');
+    this.load.audio('coffeeSound','../assets/coffee.wav');
+    this.load.audio('impact','../assets/impact.wav');
   }
 
   create(): void {
@@ -173,6 +176,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
         this.ppa.setVelocityY(-400);
+        this.sound.play('jump');
         this.ppa.anims.pause(this.ppa.anims.currentFrame); // stops animation while jumping
         this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this}); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
         this.isJumping = true;
@@ -212,6 +216,7 @@ export class GameScene extends Phaser.Scene {
     else{ //else, end game and go the GameOverScene
       this.scene.start('GameOverScene', {score : this.score, bestScore : this.previousScore});
     }
+    this.sound.play('impact'); // play sound
   }
 
 
@@ -222,6 +227,7 @@ getCoffee(){ // method called when overlap coffee and character
   this.lifes += 1; // add life
   console.log("coffee hit");
   this.heart = this.add.image(this.game.canvas.width - 70, 60,'heart'); // add heart
+  this.sound.play('coffeeSound');
 }
 
 timerEnded(){ // eventTimer for jump (delay)
