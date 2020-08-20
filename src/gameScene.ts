@@ -51,6 +51,7 @@ export class GameScene extends Phaser.Scene {
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.arrayObstacles = ['beer', 'chimie', 'multi', 'calc', 'math']; // here to add different obstacles
     this.isSoundOn = params.isSoundOn;
+    console.log(this.isSoundOn);
 
     if (params.hasOwnProperty('previousScore')) { //load best score from GameOverScene (if exists)
       this.previousScore = params.previousScore;
@@ -239,35 +240,35 @@ export class GameScene extends Phaser.Scene {
       if (child.body.position.x < 0) {
         child.destroy();
       }
-    }, this)
+    }, this);
     this.multis.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
       if (child.body.position.x < 0) {
         child.destroy();
       }
-    }, this)
+    }, this);
     this.calcs.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
       if (child.body.position.x < 0) {
         child.destroy();
       }
-    }, this)
+    }, this);
     this.math.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
       if (child.body.position.x < 0) {
         child.destroy();
       }
-    }, this)
+    }, this);
     this.chimies.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
       if (child.body.position.x < 0) {
         child.destroy();
       }
-    }, this)
+    }, this);
 
     this.soundControl.on('pointerover', () => { // hover effect on music controller
       this.soundControl.setScale(1.2, 1.2);
-    })
+    });
 
     this.soundControl.on('pointerout', () => {
       this.soundControl.setScale(1, 1);
-    })
+    });
 
 
     this.background.tilePositionX += 2; //Parallax and ground scrolling
