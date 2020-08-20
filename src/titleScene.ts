@@ -24,7 +24,7 @@ export class TitleScene extends Phaser.Scene {
 
     }
  
-    preload(): void { // load images
+    preload(): void { // load images and audio
         this.load.image('gameLogo','../assets/gameLogo.png');
         this.load.image('buttonPlay', '../assets/play.png');
         this.load.image('backgr_tree_back', '../assets/parallax-forest-back-trees.png');
@@ -32,6 +32,7 @@ export class TitleScene extends Phaser.Scene {
         this.load.image('backgr_light', '../assets/parallax-forest-lights.png');
         this.load.image('backgr_tree_mid', '../assets/parallax-forest-middle-trees.png');
         this.load.image('ground', '../assets/ground.png');
+        this.load.audio('launch','../assets/launch.wav');
     }
 
     create(): void {
@@ -77,6 +78,8 @@ export class TitleScene extends Phaser.Scene {
         this.gameLogo.setVelocityY(-150); // jump of logo at the beginning
         this.gameLogo.setGravityY(350);
         this.spaceKey.on('down',this.startGameSpace,this); // is space key pressed, event and callback function called
+
+        this.sound.play('launch');
     }
 
     update(time): void {
