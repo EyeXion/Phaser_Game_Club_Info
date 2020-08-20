@@ -22,6 +22,9 @@ const config: Phaser.Types.Core.GameConfig = {
       debug: false
     }
   },
+  audio:{
+    disableWebAudio : true,
+  },
   backgroundColor: "#000033"
 };
 

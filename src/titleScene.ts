@@ -60,6 +60,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     startGameSpace() : void{ // callback function space key down
+        this.sound.removeAll();
         this.scene.start('GameScene');
     }
 }

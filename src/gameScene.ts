@@ -20,7 +20,8 @@ export class GameScene extends Phaser.Scene {
   timeTilSpawn: number; // time til next obstacle is created
   timerJump: number; // Allows the player to gauge their jump
   ground: Phaser.Physics.Arcade.StaticGroup; // Physical ground object
-  info: Phaser.GameObjects.Text; // Text
+  info: Phaser.GameObjects.BitmapText; // Text
+  bestscoreText : Phaser.GameObjects.BitmapText; // Text
   score: number; // stores the current score (not best)
   ppa: Phaser.Physics.Arcade.Sprite; // Player's object
   spaceKey: Phaser.Input.Keyboard.Key; // object representing the space key
@@ -72,10 +73,11 @@ export class GameScene extends Phaser.Scene {
     this.load.audio('coffeeSound', '../assets/coffee.mp3');
     this.load.audio('impact', '../assets/impact.mp3');
     this.load.audio('mainSound', '../assets/bgSoundMain.mp3');
+    this.load.bitmapFont('myfont', '../assets/font.png', '../assets/font.fnt');
   }
 
   create(): void {
-    this.sound.play('mainSound', { volume: 0.3, loop: true });
+    this.sound.play('mainSound');
     this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
     this.ground.create(400, 300, 'ground');
 
@@ -103,8 +105,8 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.ppa, this.ground); // add collider between ground (physics) and character
     this.ppa.setSize(28, 45); // collider size for the character
 
-    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString() + '                Best Score : ' + this.previousScore.toString(),
-      { font: '24px Arial Bold', fill: '#FBFBAC' });
+    this.info = this.add.bitmapText(10, 10, 'myfont','SCORE : ' + this.score.toString());
+    this.bestscoreText  = this.add.bitmapText(350, 10, 'myfont','BEST SCORE : ' + this.previousScore.toString());
     this.lastSpawnTime = this.game.getTime();
 
     this.beers = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
@@ -157,8 +159,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.overlap(this.coffee, this.ppa, this.getCoffee, null, this); // event listener overlap character and coffee
 
     this.info.destroy();
-    this.info = this.add.text(10, 10, 'Course du PPA ! Score : ' + this.score.toString() + '                Best Score : ' + this.previousScore.toString(),
-      { font: '24px Arial Bold', fill: '#FBFBAC' }); //update text
+    this.info = this.add.bitmapText(10, 10, 'myfont','SCORE : ' + this.score.toString());
 
 
     if ((currentTime - this.lastSpawnTime) > this.timeTilSpawn && (this.score < 180 || this.score > 220)) { //spawn obsatacles if time ok
@@ -195,14 +196,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
-      this.ppa.setVelocityY(-400);
+      this.ppa.setVelocityY(-420);
       this.sound.play('jump', { volume: 0.2 });
       this.ppa.anims.pause(this.ppa.anims.currentFrame); // stops animation while jumping
       this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this }); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
       this.isJumping = true;
     }
     else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true) { // if space key still down and delay has not passed, jump is higher
-      this.ppa.setVelocityY(-400);
+      this.ppa.setVelocityY(-420);
     }
 
     else if (this.ppa.body.touching.down && this.ppa.anims.isPaused) { // restart animation after end of jump
@@ -242,6 +243,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   collide(): void { // method called when obstacle collide with character
+    this.sound.play('impact'); // play sound
     if (this.lifes > 0) { // if lifes remaining, destroy obstacle and decrement lifes
       this.beers.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
         child.destroy();
@@ -263,10 +265,9 @@ export class GameScene extends Phaser.Scene {
       this.heart.destroy();
     }
     else { //else, end game and go the GameOverScene
+      this.sound.removeAll();
       this.scene.start('GameOverScene', { score: this.score, bestScore: this.previousScore });
-      this.sound.stopAll();
     }
-    this.sound.play('impact'); // play sound
   }
 
 
@@ -276,7 +277,7 @@ export class GameScene extends Phaser.Scene {
     }, this);
     this.lifes += 1; // add life
     console.log("coffee hit");
-    this.heart = this.add.image(this.game.canvas.width - 70, 60, 'heart'); // add heart
+    this.heart = this.add.image(this.game.canvas.width - 70, 30, 'heart'); // add heart
     this.sound.play('coffeeSound');
   }
 
