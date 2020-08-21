@@ -36,6 +36,8 @@ export class GameScene extends Phaser.Scene {
   soundControl: Phaser.Physics.Arcade.Sprite;
   isSoundOn: boolean;
   isRedChosen : boolean;
+  looseLifeCounter : number; // used for the effect when loosing a life
+  isLooseLifeFinished : boolean;
   constructor() {
     super({
       key: "GameScene"
@@ -43,6 +45,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(params): void {
+    this.isLooseLifeFinished = true;
+    this.looseLifeCounter = 0;
     this.jumpPower = -440;
     this.gravityPower = 1200;
     this.isJumping = false;
@@ -286,6 +290,17 @@ export class GameScene extends Phaser.Scene {
       this.soundControl.setScale(1, 1);
     });
 
+    if (this.looseLifeCounter != 0 && this.isLooseLifeFinished){
+      this.looseLifeCounter -= 1;
+      this.isLooseLifeFinished = false;
+      this.time.addEvent({delay : 150, callback :this.makeCharNotVisible, callbackScope :this});
+      this.time.addEvent({delay : 300, callback : this.makeCharVisible, callbackScope :this});
+      this.time.addEvent({delay : 300, callback : this.setLooseLifeFinished, callbackScope : this});
+      if (this.looseLifeCounter == 0){
+        this.time.addEvent({delay : 450, callback :this.makeCharVisible, callbackScope :this});
+      }
+    }
+
 
     this.background.tilePositionX += 2; //Parallax and ground scrolling
   }
@@ -313,6 +328,8 @@ export class GameScene extends Phaser.Scene {
       this.lifes -= 1;
       this.ppa.setVelocityX(0);
       this.heart.destroy();
+      this.looseLifeCounter = 6;
+      this.makeCharNotVisible();
     }
     else { //else, end game and go the GameOverScene
       this.sound.removeAll();
@@ -335,5 +352,16 @@ export class GameScene extends Phaser.Scene {
 
   timerEnded() { // eventTimer for jump (delay)
     this.isJumping = false;
+  }
+
+  makeCharNotVisible () :void{
+    this.ppa.setVisible(false);
+  }
+
+  makeCharVisible() : void{
+    this.ppa.setVisible(true);
+  }
+  setLooseLifeFinished() :void{
+    this.isLooseLifeFinished = true;
   }
 };
