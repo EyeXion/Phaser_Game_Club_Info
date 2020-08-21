@@ -9,13 +9,14 @@ import "phaser";
 import { GameScene } from "./gameScene";
 import { GameOverScene } from "./gameOverScene";
 import { TitleScene } from "./titleScene";
+import { ChoiceScene } from "./choiceScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   title: "La course du PPA",
   width: 800,
   height: 300,
   parent: "game",
-  scene: [TitleScene,GameScene,GameOverScene],
+  scene: [TitleScene,GameScene,GameOverScene, ChoiceScene],
   physics: {
     default: "arcade",
     arcade: {
