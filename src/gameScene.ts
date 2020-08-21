@@ -33,6 +33,7 @@ export class GameScene extends Phaser.Scene {
   isJumping: boolean; // used for gauging jumps
   soundControl: Phaser.Physics.Arcade.Sprite;
   isSoundOn: boolean;
+  isRedChosen : boolean;
   constructor() {
     super({
       key: "GameScene"
@@ -51,6 +52,7 @@ export class GameScene extends Phaser.Scene {
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.arrayObstacles = ['beer', 'chimie', 'multi', 'calc', 'math']; // here to add different obstacles
     this.isSoundOn = params.isSoundOn;
+    this.isRedChosen = params.isRedChosen;
     console.log(this.isSoundOn);
 
     if (params.hasOwnProperty('previousScore')) { //load best score from GameOverScene (if exists)
@@ -69,7 +71,12 @@ export class GameScene extends Phaser.Scene {
     this.load.image('chimie', '../assets/chimie.png');
     this.load.image('backgr', '../assets/bg.png');
     this.load.image('heart', '../assets/heart.png');
-    this.load.spritesheet('ppa', '../assets/ppablouse.png', { frameWidth: 32, frameHeight: 48 });
+    if (this.isRedChosen){
+      this.load.spritesheet('ppa', '../assets/ppablouse_rouge.png', { frameWidth: 32, frameHeight: 48 });
+    }
+    else{
+      this.load.spritesheet('ppa', '../assets/ppablouse_jaune.png', { frameWidth: 32, frameHeight: 48 });
+    }
     this.load.spritesheet('coffee', '../assets/Coffee.png', { frameWidth: 24, frameHeight: 24 });
     this.load.audio('jump', '../assets/jump.wav');
     this.load.audio('coffeeSound', '../assets/coffee.mp3');
@@ -78,6 +85,7 @@ export class GameScene extends Phaser.Scene {
     this.load.bitmapFont('myfont', '../assets/font.png', '../assets/font.fnt');
     this.load.image('soundOn', '../assets/musicOn.png');
     this.load.image('soundOff', '../assets/musicOff.png');
+    this.load.image('ground','../assets/ground.png');
   }
 
   create(): void {
@@ -300,7 +308,8 @@ export class GameScene extends Phaser.Scene {
     }
     else { //else, end game and go the GameOverScene
       this.sound.removeAll();
-      this.scene.start('GameOverScene', { score: this.score, bestScore: this.previousScore, isSoundOn: this.isSoundOn });
+      this.scene.start('GameOverScene', { score: this.score, bestScore: this.previousScore, isSoundOn: this.isSoundOn,
+      isRedChosen : this.isRedChosen });
     }
   }
 

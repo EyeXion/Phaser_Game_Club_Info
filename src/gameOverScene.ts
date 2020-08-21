@@ -13,6 +13,7 @@ export class GameOverScene extends Phaser.Scene {
     retryLogo: Phaser.Physics.Arcade.Sprite; // Game logo
     soundControl: Phaser.Physics.Arcade.Sprite;
     isSoundOn: boolean;
+    isRedChosen : boolean;
     constructor() {
         super({
             key: "GameOverScene"
@@ -29,11 +30,11 @@ export class GameOverScene extends Phaser.Scene {
             this.bestScore = params.bestScore;
         }
         this.isSoundOn = params.isSoundOn;
+        this.isRedChosen = params.isRedChosen;
     }
 
     preload(): void { //load images and audio
         this.load.image('buttonRestart', '../assets/buttonRestart.png');
-        this.load.audio('deathSong', '../assets/deathSong.mp3');
         this.load.image('retryLogo', "../assets/retry.png");
         this.load.image('bestScore', '../assets/highScore.png');
         this.load.image('buttonPlay', '../assets/play.png');
@@ -52,7 +53,7 @@ export class GameOverScene extends Phaser.Scene {
             this.textures.get('backgr').getSourceImage().height,
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
-        this.restartButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.03, 0.03);
+        this.restartButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.3, 0.3);
         this.restartButton.on('pointerdown', this.startGameSpace,this);  // add event on click on button -> go to main scene
 
         this.add.image(130, 30, 'bestScore').setScale(0.22, 0.22);
@@ -86,11 +87,11 @@ export class GameOverScene extends Phaser.Scene {
 
     update(time): void {
         this.restartButton.on('pointerover', () => {
-            this.restartButton.setScale(0.04, 0.04);
+            this.restartButton.setScale(0.4, 0.4);
         })
 
         this.restartButton.on('pointerout', () => {
-            this.restartButton.setScale(0.03, 0.03);
+            this.restartButton.setScale(0.3, 0.3);
         })
 
         this.soundControl.on('pointerover', () => { // hover effect on music controller
@@ -105,7 +106,8 @@ export class GameOverScene extends Phaser.Scene {
     startGameSpace(): void { // callback function space key down
         if (this.time.now > 3000) {
             this.sound.removeByKey('deathSong');
-            this.scene.start('GameScene', { previousScore: this.bestScore, isSoundOn: this.isSoundOn });
+            this.scene.start('GameScene', { previousScore: this.bestScore, isSoundOn: this.isSoundOn,
+            isRedChosen : this.isRedChosen });
         }
     }
 }
