@@ -14,6 +14,7 @@ export class GameOverScene extends Phaser.Scene {
     soundControl: Phaser.Physics.Arcade.Sprite;
     isSoundOn: boolean;
     isRedChosen : boolean;
+    hasTimerEnded : boolean;
     constructor() {
         super({
             key: "GameOverScene"
@@ -31,6 +32,7 @@ export class GameOverScene extends Phaser.Scene {
         }
         this.isSoundOn = params.isSoundOn;
         this.isRedChosen = params.isRedChosen;
+        this.hasTimerEnded = false;
     }
 
     preload(): void { //load images and audio
@@ -83,6 +85,7 @@ export class GameOverScene extends Phaser.Scene {
                 this.soundControl.setTexture('soundOn');
             }
         });
+        this.time.addEvent({ delay: 1000, callback: this.timerEnded, callbackScope: this }); // add timer so that u dont restart right away if you keep pressing space after you die
     }
 
     update(time): void {
@@ -104,10 +107,14 @@ export class GameOverScene extends Phaser.Scene {
     }
 
     startGameSpace(): void { // callback function space key down
-        if (this.time.now > 3000) {
+        if (this.hasTimerEnded) {
             this.sound.removeByKey('deathSong');
             this.scene.start('GameScene', { previousScore: this.bestScore, isSoundOn: this.isSoundOn,
             isRedChosen : this.isRedChosen });
         }
+    }
+    
+    timerEnded() : void{
+        this.hasTimerEnded = true;
     }
 }
