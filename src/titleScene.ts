@@ -10,6 +10,7 @@ export class TitleScene extends Phaser.Scene {
     spaceKey: Phaser.Input.Keyboard.Key; // object for space key
     soundControl: Phaser.Physics.Arcade.Sprite;
     isSoundOn: boolean;
+    hasLaunchPlayed: boolean;
     constructor() {
         super({
             key: "TitleScene"
@@ -19,15 +20,16 @@ export class TitleScene extends Phaser.Scene {
     init(params): void {
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.isSoundOn = true;
+        this.hasLaunchPlayed = false;
     }
 
     preload(): void { // load images and audio
         this.load.image('gameLogo', '../assets/gameLogo1.png');
         this.load.image('buttonPlay', '../assets/play1.png');
         this.load.image('backgr', '../assets/bg.png');
-        this.load.audio('launch', '../assets/launch.mp3');
         this.load.image('soundOn', '../assets/musicOn.png');
         this.load.image('soundOff', '../assets/musicOff.png');
+        this.load.audio('launch', '../assets/launch.mp3');
         this.load.audio('jump', '../assets/jump.wav');
         this.load.audio('coffeeSound', '../assets/coffee.mp3');
         this.load.audio('impact', '../assets/impact.mp3');
@@ -36,6 +38,7 @@ export class TitleScene extends Phaser.Scene {
         this.load.audio('chooseSound', '../assets/chooseSound.wav');
         this.load.audio('yellowSound', '../assets/yellowTeamSound.wav');
         this.load.audio('redSound', '../assets/redTeamSound.wav');
+
 
     }
 
@@ -50,7 +53,7 @@ export class TitleScene extends Phaser.Scene {
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
         this.playButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.3, 0.3);
-        this.playButton.on('pointerdown', this.startGameSpace,this); // add event on click on button -> go to main scene
+        this.playButton.on('pointerdown', this.startGameSpace, this); // add event on click on button -> go to main scene
 
         this.soundControl = this.physics.add.sprite(20, 100, 'soundOn').setInteractive();
         this.soundControl.on('pointerdown', () => { // add event on click on button -> sound on or off
@@ -71,10 +74,15 @@ export class TitleScene extends Phaser.Scene {
         this.gameLogo.setGravityY(350);
         this.spaceKey.on('down', this.startGameSpace, this); // is space key pressed, event and callback function called
 
-        this.sound.play('launch', { volume: 0.5 });
     }
 
     update(time): void {
+        if (!this.hasLaunchPlayed) {
+            this.sound.play('launch', { volume: 0.5 });
+            console.log("soundlaunched");
+            this.hasLaunchPlayed = true;
+        }
+
         if (this.gameLogo.y >= this.cameras.main.centerY - 40) { // Floating effect game logo
             this.gameLogo.setVelocityY(-50);
         }
@@ -99,6 +107,6 @@ export class TitleScene extends Phaser.Scene {
     startGameSpace(): void { // callback function space key down or button hit
         this.sound.removeAll();
         console.log(this.isSoundOn);
-        this.scene.start('ChoiceScene', { isSoundOn : this.isSoundOn });
+        this.scene.start('ChoiceScene', { isSoundOn: this.isSoundOn });
     }
 }
