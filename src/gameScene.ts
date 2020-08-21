@@ -31,6 +31,8 @@ export class GameScene extends Phaser.Scene {
   arrayObstacles: Array<string>; //Array containing images for the different obstacles
   previousScore: number; //best score yet
   isJumping: boolean; // used for gauging jumps
+  jumpPower : number; // value used for jumps, evolving
+  gravityPower : number; // value for gravity, evolving
   soundControl: Phaser.Physics.Arcade.Sprite;
   isSoundOn: boolean;
   isRedChosen : boolean;
@@ -41,6 +43,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   init(params): void {
+    this.jumpPower = -440;
+    this.gravityPower = 1200;
     this.isJumping = false;
     this.minSpawnTime = 1000; // at start, 1 sec min between enemies
     this.factorSpawnTume = 2000;
@@ -135,7 +139,7 @@ export class GameScene extends Phaser.Scene {
     this.animWalk = this.anims.create(config); // creation of the animation for te character
 
     this.ppa.anims.play('walk');
-    this.ppa.setGravityY(1200); // set gravity for the character
+    this.ppa.setGravityY(this.gravityPower); // set gravity for the character
     this.physics.add.collider(this.ppa, this.ground); // add collider between ground (physics) and character
     this.ppa.setSize(28, 45); // collider size for the character
 
@@ -177,6 +181,9 @@ export class GameScene extends Phaser.Scene {
       this.speed -= 0.07;
       this.factorSpawnTume -= 0.15; // diminish the time obstacles spawn (otherwise the game is too easy at the end)
       this.minSpawnTime -= 0.04;
+      this.gravityPower += 0.2;
+      this.ppa.setGravityY(this.gravityPower);
+      this.jumpPower -= 0.02;
     }
 
     this.beers.setVelocityX(-200 + this.speed); // update of speed for obstacles and coffee group 
@@ -226,7 +233,8 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
-      this.ppa.setVelocityY(-440);
+      console.log(this.jumpPower);
+      this.ppa.setVelocityY(this.jumpPower);
       if (this.isSoundOn) {
         this.sound.play('jump', { volume: 0.2 });
       }
@@ -235,7 +243,7 @@ export class GameScene extends Phaser.Scene {
       this.isJumping = true;
     }
     else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true) { // if space key still down and delay has not passed, jump is higher
-      this.ppa.setVelocityY(-440);
+      this.ppa.setVelocityY(this.jumpPower);
     }
 
     else if (this.ppa.body.touching.down && this.ppa.anims.isPaused) { // restart animation after end of jump
