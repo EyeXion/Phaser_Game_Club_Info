@@ -22,8 +22,8 @@ export class TitleScene extends Phaser.Scene {
     }
 
     preload(): void { // load images and audio
-        this.load.image('gameLogo', '../assets/gameLogo.png');
-        this.load.image('buttonPlay', '../assets/play.png');
+        this.load.image('gameLogo', '../assets/gameLogo1.png');
+        this.load.image('buttonPlay', '../assets/play1.png');
         this.load.image('backgr', '../assets/bg.png');
         this.load.audio('launch', '../assets/launch.mp3');
         this.load.image('soundOn', '../assets/musicOn.png');
