@@ -77,7 +77,7 @@ export class GameScene extends Phaser.Scene {
     else{
       this.load.spritesheet('ppa', '../assets/ppablouse_jaune.png', { frameWidth: 32, frameHeight: 48 });
     }
-    this.load.spritesheet('coffee', '../assets/Coffee.png', { frameWidth: 24, frameHeight: 24 });
+    this.load.image('coffee', '../assets/coffee.png');
     this.load.audio('jump', '../assets/jump.wav');
     this.load.audio('coffeeSound', '../assets/coffee.mp3');
     this.load.audio('impact', '../assets/impact.mp3');
@@ -101,7 +101,7 @@ export class GameScene extends Phaser.Scene {
       'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
 
-    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8); // Creating character
+    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8).setScale(1,1.1);// Creating character
 
     const config: Phaser.Types.Animations.Animation = { // config of the animation object
       key: 'walk',
@@ -163,7 +163,7 @@ export class GameScene extends Phaser.Scene {
 
 
     this.coffee = this.physics.add.group({ // config for the coffee group
-      setScale: { x: 2, y: 2 },
+      setScale: { x: 0.5, y: 0.5 },
       allowGravity: false,
       velocityX: -250,
     });
@@ -226,7 +226,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
-      this.ppa.setVelocityY(-420);
+      this.ppa.setVelocityY(-440);
       if (this.isSoundOn) {
         this.sound.play('jump', { volume: 0.2 });
       }
@@ -235,7 +235,7 @@ export class GameScene extends Phaser.Scene {
       this.isJumping = true;
     }
     else if (this.spaceKey.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true) { // if space key still down and delay has not passed, jump is higher
-      this.ppa.setVelocityY(-420);
+      this.ppa.setVelocityY(-440);
     }
 
     else if (this.ppa.body.touching.down && this.ppa.anims.isPaused) { // restart animation after end of jump
