@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.sound.play('mainSound');
+    this.sound.play('mainSound', {loop : true});
     this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
     this.ground.create(400, 300, 'ground');
 
@@ -135,7 +135,7 @@ export class GameScene extends Phaser.Scene {
       }
       else {
         this.isSoundOn = true;
-        this.sound.play('mainSound');
+        this.sound.play('mainSound', {loop : true});
         this.soundControl.setTexture('soundOn');
       }
     });
