@@ -38,6 +38,7 @@ export class TitleScene extends Phaser.Scene {
         this.load.audio('chooseSound', '../assets/chooseSound.wav');
         this.load.audio('yellowSound', '../assets/yellowTeamSound.wav');
         this.load.audio('redSound', '../assets/redTeamSound.wav');
+        this.load.image('groundTexture', '../assets/sol.png');
 
 
     }
@@ -51,6 +52,12 @@ export class TitleScene extends Phaser.Scene {
             this.game.canvas.width,
             this.textures.get('backgr').getSourceImage().height,
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
+
+            this.groundTexture = this.add.tileSprite(this.cameras.main.centerX,
+                this.cameras.main.centerY,
+                this.game.canvas.width,
+                this.textures.get('groundTexture').getSourceImage().height,
+                'groundTexture').setScale(1, (this.cameras.main.height / this.textures.get('groundTexture').getSourceImage().height));
 
         this.playButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 70, 'buttonPlay').setInteractive().setScale(0.3, 0.3);
         this.playButton.on('pointerdown', this.startGameSpace, this); // add event on click on button -> go to main scene

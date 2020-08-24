@@ -15,6 +15,7 @@ export class ChoiceScene extends Phaser.Scene {
     yellowTeamChar: Phaser.Physics.Arcade.Sprite;
     isSoundOn: boolean;
     isRedChosen: boolean;
+    groundTexture: Phaser.GameObjects.TileSprite;
     constructor() {
         super({
             key: "ChoiceScene"
@@ -35,6 +36,8 @@ export class ChoiceScene extends Phaser.Scene {
         this.load.image('yellowText', '../assets/yellowText.png');
         this.load.image('chooseText', '../assets/chooseText.png');
         this.load.image('backgr', '../assets/bg.png');
+        this.load.image('groundTexture', '../assets/sol.png');
+
     }
 
     create(): void {
@@ -46,6 +49,12 @@ export class ChoiceScene extends Phaser.Scene {
             this.game.canvas.width,
             this.textures.get('backgr').getSourceImage().height,
             'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
+
+        this.groundTexture = this.add.tileSprite(this.cameras.main.centerX,
+            this.cameras.main.centerY,
+            this.game.canvas.width,
+            this.textures.get('groundTexture').getSourceImage().height,
+            'groundTexture').setScale(1, (this.cameras.main.height / this.textures.get('groundTexture').getSourceImage().height));
 
         this.playButton = this.physics.add.sprite(this.cameras.main.centerX, this.cameras.main.centerY + 90, 'buttonPlay').setInteractive().setScale(0.3, 0.3);
         this.playButton.on('pointerdown', this.startGameSpace, this); // add event on click on button -> go to main scene
