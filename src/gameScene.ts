@@ -31,13 +31,15 @@ export class GameScene extends Phaser.Scene {
   arrayObstacles: Array<string>; //Array containing images for the different obstacles
   previousScore: number; //best score yet
   isJumping: boolean; // used for gauging jumps
-  jumpPower : number; // value used for jumps, evolving
-  gravityPower : number; // value for gravity, evolving
+  jumpPower: number; // value used for jumps, evolving
+  gravityPower: number; // value for gravity, evolving
   soundControl: Phaser.Physics.Arcade.Sprite;
   isSoundOn: boolean;
-  isRedChosen : boolean;
-  looseLifeCounter : number; // used for the effect when loosing a life
-  isLooseLifeFinished : boolean;
+  isRedChosen: boolean;
+  looseLifeCounter: number; // used for the effect when loosing a life
+  isLooseLifeFinished: boolean;
+  groundTexture: Phaser.GameObjects.TileSprite;
+  bgSpeed : number;
   constructor() {
     super({
       key: "GameScene"
@@ -61,6 +63,7 @@ export class GameScene extends Phaser.Scene {
     this.arrayObstacles = ['beer', 'chimie', 'multi', 'calc', 'math']; // here to add different obstacles
     this.isSoundOn = params.isSoundOn;
     this.isRedChosen = params.isRedChosen;
+    this.bgSpeed = 0;
     console.log(this.isSoundOn);
 
     if (params.hasOwnProperty('previousScore')) { //load best score from GameOverScene (if exists)
@@ -78,11 +81,11 @@ export class GameScene extends Phaser.Scene {
     this.load.image('math', '../assets/math0.png');
     this.load.image('chimie', '../assets/chimie.png');
     this.load.image('backgr', '../assets/bg.png');
-    this.load.image('heart', '../assets/heart.png');
-    if (this.isRedChosen){
+    this.load.image('heart', '../assets/totem.png');
+    if (this.isRedChosen) {
       this.load.spritesheet('ppa', '../assets/ppablouse_rouge.png', { frameWidth: 32, frameHeight: 48 });
     }
-    else{
+    else {
       this.load.spritesheet('ppa', '../assets/ppablouse_jaune.png', { frameWidth: 32, frameHeight: 48 });
     }
     this.load.image('coffee', '../assets/coffee.png');
@@ -93,11 +96,12 @@ export class GameScene extends Phaser.Scene {
     this.load.bitmapFont('myfont', '../assets/font.png', '../assets/font.fnt');
     this.load.image('soundOn', '../assets/musicOn.png');
     this.load.image('soundOff', '../assets/musicOff.png');
-    this.load.image('ground','../assets/ground.png');
+    this.load.image('ground', '../assets/ground.png');
+    this.load.image('groundTexture', '../assets/sol.png');
   }
 
   create(): void {
-    this.sound.play('mainSound', {loop : true});
+    this.sound.play('mainSound', { loop: true });
     this.ground = this.physics.add.staticGroup(); //creating physics ground (not seen on screen, behind bg)
     this.ground.create(400, 300, 'ground');
 
@@ -108,8 +112,16 @@ export class GameScene extends Phaser.Scene {
       this.textures.get('backgr').getSourceImage().height,
       'backgr').setScale(1, (this.cameras.main.height / this.textures.get('backgr').getSourceImage().height));
 
+    this.groundTexture = this.add.tileSprite(this.cameras.main.centerX,
+      this.cameras.main.centerY,
+      this.game.canvas.width,
+      this.textures.get('groundTexture').getSourceImage().height,
+      'groundTexture').setScale(1, (this.cameras.main.height / this.textures.get('groundTexture').getSourceImage().height));
 
-    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8).setScale(1,1.1);// Creating character
+
+
+
+    this.ppa = this.physics.add.sprite(200, 200, 'ppa', 8).setScale(1, 1.1);// Creating character
 
     const config: Phaser.Types.Animations.Animation = { // config of the animation object
       key: 'walk',
@@ -135,7 +147,7 @@ export class GameScene extends Phaser.Scene {
       }
       else {
         this.isSoundOn = true;
-        this.sound.play('mainSound', {loop : true});
+        this.sound.play('mainSound', { loop: true });
         this.soundControl.setTexture('soundOn');
       }
     });
@@ -151,21 +163,21 @@ export class GameScene extends Phaser.Scene {
     this.bestscoreText = this.add.bitmapText(350, 10, 'myfont', 'BEST SCORE : ' + this.previousScore.toString());
     this.lastSpawnTime = this.game.getTime();
 
-    this.beers = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
+    this.beers = this.physics.add.group({ velocityX: -300 }); //Creation on obstacles' group
     this.beers.create(this.game.canvas.width - 50, 245, 'beer'); // create first obstacle
     this.physics.add.collider(this.ppa, this.beers, this.collide, null, this); // add collider beteween obstacles and player
 
 
-    this.multis = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
+    this.multis = this.physics.add.group({ velocityX: -300 }); //Creation on obstacles' group
     this.physics.add.collider(this.ppa, this.multis, this.collide, null, this); // add collider beteween obstacles and player
 
-    this.calcs = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
+    this.calcs = this.physics.add.group({ velocityX: -300 }); //Creation on obstacles' group
     this.physics.add.collider(this.ppa, this.calcs, this.collide, null, this); // add collider beteween obstacles and player
 
-    this.chimies = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
+    this.chimies = this.physics.add.group({ velocityX: -300 }); //Creation on obstacles' group
     this.physics.add.collider(this.ppa, this.chimies, this.collide, null, this); // add collider beteween obstacles and player
 
-    this.math = this.physics.add.group({ velocityX: -250 }); //Creation on obstacles' group
+    this.math = this.physics.add.group({ velocityX: -300 }); //Creation on obstacles' group
     this.physics.add.collider(this.ppa, this.math, this.collide, null, this); // add collider beteween obstacles and player
 
 
@@ -173,21 +185,24 @@ export class GameScene extends Phaser.Scene {
     this.coffee = this.physics.add.group({ // config for the coffee group
       setScale: { x: 0.5, y: 0.5 },
       allowGravity: false,
-      velocityX: -250,
+      velocityX: -300,
     });
+
   }
 
   update(time): void {
+
     var currentTime: number = this.game.getTime(); // used to know the time to spawn
     this.score += 1; // increment score
 
-    if (this.speed < 220) { // acceleration of game up to a certain speed
+    if (this.speed < 230) { // acceleration of game up to a certain speed
       this.speed -= 0.07;
       this.factorSpawnTume -= 0.15; // diminish the time obstacles spawn (otherwise the game is too easy at the end)
-      this.minSpawnTime -= 0.04;
+      this.minSpawnTime -= 0.07;
       this.gravityPower += 0.2;
       this.ppa.setGravityY(this.gravityPower);
       this.jumpPower -= 0.02;
+      this.bgSpeed += 0.0012;
     }
 
     this.beers.setVelocityX(-200 + this.speed); // update of speed for obstacles and coffee group 
@@ -237,7 +252,6 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.spaceKey.isDown && this.ppa.body.touching.down) { // jump config
-      console.log(this.jumpPower);
       this.ppa.setVelocityY(this.jumpPower);
       if (this.isSoundOn) {
         this.sound.play('jump', { volume: 0.2 });
@@ -255,29 +269,47 @@ export class GameScene extends Phaser.Scene {
       this.ppa.anims.restart();
     }
 
+    if (this.input.pointer1.isDown && this.ppa.body.touching.down){
+      console.log(this.jumpPower);
+      this.ppa.setVelocityY(this.jumpPower);
+      if (this.isSoundOn) {
+        this.sound.play('jump', { volume: 0.2 });
+      }
+      this.ppa.anims.pause(this.ppa.anims.currentFrame); // stops animation while jumping
+      this.time.addEvent({ delay: 225, callback: this.timerEnded, callbackScope: this }); // add timer to allow the player to gauge their jump for 225 ms by keeping space key down
+      this.isJumping = true;
+    }
+    else if (this.input.pointer1.isDown && this.ppa.body.gravity.y >= 800 && this.isJumping === true){
+      this.ppa.setVelocityY(this.jumpPower);
+    }
+
+    else if (this.ppa.body.y > 250.24 && this.ppa.anims.isPaused) { // restart animation after end of jump
+      console.log("animation restart");
+      this.ppa.anims.restart();
+    }
 
     this.beers.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
-      if (child.body.position.x < 0) {
+      if (child.body.position.x < -90) {
         child.destroy();
       }
     }, this);
     this.multis.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
-      if (child.body.position.x < 0) {
+      if (child.body.position.x < -90) {
         child.destroy();
       }
     }, this);
     this.calcs.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
-      if (child.body.position.x < 0) {
+      if (child.body.position.x < -90) {
         child.destroy();
       }
     }, this);
     this.math.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
-      if (child.body.position.x < 0) {
+      if (child.body.position.x < -90) {
         child.destroy();
       }
     }, this);
     this.chimies.getChildren().forEach((child) => { //destroy obstacles that are out of the canvas
-      if (child.body.position.x < 0) {
+      if (child.body.position.x < -90) {
         child.destroy();
       }
     }, this);
@@ -290,19 +322,20 @@ export class GameScene extends Phaser.Scene {
       this.soundControl.setScale(1, 1);
     });
 
-    if (this.looseLifeCounter != 0 && this.isLooseLifeFinished){
+    if (this.looseLifeCounter != 0 && this.isLooseLifeFinished) {
       this.looseLifeCounter -= 1;
       this.isLooseLifeFinished = false;
-      this.time.addEvent({delay : 150, callback :this.makeCharNotVisible, callbackScope :this});
-      this.time.addEvent({delay : 300, callback : this.makeCharVisible, callbackScope :this});
-      this.time.addEvent({delay : 300, callback : this.setLooseLifeFinished, callbackScope : this});
-      if (this.looseLifeCounter == 0){
-        this.time.addEvent({delay : 450, callback :this.makeCharVisible, callbackScope :this});
+      this.time.addEvent({ delay: 150, callback: this.makeCharNotVisible, callbackScope: this });
+      this.time.addEvent({ delay: 300, callback: this.makeCharVisible, callbackScope: this });
+      this.time.addEvent({ delay: 300, callback: this.setLooseLifeFinished, callbackScope: this });
+      if (this.looseLifeCounter == 0) {
+        this.time.addEvent({ delay: 450, callback: this.makeCharVisible, callbackScope: this });
       }
     }
 
 
-    this.background.tilePositionX += 2; //Parallax and ground scrolling
+    this.background.tilePositionX += 2 + this.bgSpeed; //Parallax and ground scrolling
+    this.groundTexture.tilePositionX += 3.28 + this.bgSpeed;
   }
 
   collide(): void { // method called when obstacle collide with character
@@ -333,8 +366,10 @@ export class GameScene extends Phaser.Scene {
     }
     else { //else, end game and go the GameOverScene
       this.sound.removeAll();
-      this.scene.start('GameOverScene', { score: this.score, bestScore: this.previousScore, isSoundOn: this.isSoundOn,
-      isRedChosen : this.isRedChosen });
+      this.scene.start('GameOverScene', {
+        score: this.score, bestScore: this.previousScore, isSoundOn: this.isSoundOn,
+        isRedChosen: this.isRedChosen
+      });
     }
   }
 
@@ -354,14 +389,14 @@ export class GameScene extends Phaser.Scene {
     this.isJumping = false;
   }
 
-  makeCharNotVisible () :void{
+  makeCharNotVisible(): void {
     this.ppa.setVisible(false);
   }
 
-  makeCharVisible() : void{
+  makeCharVisible(): void {
     this.ppa.setVisible(true);
   }
-  setLooseLifeFinished() :void{
+  setLooseLifeFinished(): void {
     this.isLooseLifeFinished = true;
   }
 };
