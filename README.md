@@ -1,8 +1,7 @@
 # Phaser_Game_Club_Info - La course du PPA
 Small **HTML game** for the Club Info website. Website of the Club info : https://www.etud.insa-toulouse.fr/~clubinfo/. (Game accessible after signing in with a Google account in Games -> La course du PPA (bottom-left button)
 
-
-You can also play the game by on your computer on a live server by following the instructions below.
+You can also play the game on your computer on a live server by following the instructions below.
 
 Coded with **TypeScript** and the framework **Phaser 3**. 
 
