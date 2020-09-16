@@ -92,7 +92,7 @@ export class GameScene extends Phaser.Scene {
     this.load.audio('jump', '../assets/jump.wav');
     this.load.audio('coffeeSound', '../assets/coffee.mp3');
     this.load.audio('impact', '../assets/impact.mp3');
-    this.load.audio('mainSound', '../assets/bgSoundMain.mp3');
+    this.load.audio('mainSound', '../assets/jungle.mp3');
     this.load.bitmapFont('myfont', '../assets/font.png', '../assets/font.fnt');
     this.load.image('soundOn', '../assets/musicOn.png');
     this.load.image('soundOff', '../assets/musicOff.png');
