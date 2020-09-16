@@ -33,7 +33,7 @@ export class TitleScene extends Phaser.Scene {
         this.load.audio('jump', '../assets/jump.wav');
         this.load.audio('coffeeSound', '../assets/coffee.mp3');
         this.load.audio('impact', '../assets/impact.mp3');
-        this.load.audio('mainSound', '../assets/bgSoundMain.mp3');
+        this.load.audio('mainSound', '../assets/jungle.mp3');
         this.load.audio('deathSong', '../assets/deathSong.mp3');
         this.load.audio('chooseSound', '../assets/chooseSound.wav');
         this.load.audio('yellowSound', '../assets/yellowTeamSound.wav');
