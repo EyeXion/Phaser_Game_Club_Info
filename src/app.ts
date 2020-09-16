@@ -1,10 +1,8 @@
 import "phaser";
 
 // CREDIT FOR THE SPRITES OF CHARACTER : Sithjester
-//Artwork created by Luis Zuno (@ansimuz) (background) taken on OpenGameArt
-//Tea cup sprite by Fleurman taken on OpenGameArt
-//Heart sprite by DontMind8 taken on OpenGameArt
-// Play button taken on freepngimg.com
+// CREDIT FOR OTHER ASSETS (EXCEPT MUSIC) : Emily Holmes
+// MUSIC : Scott Elliott  https://opengameart.org/content/jungle-jumpin
 
 import { GameScene } from "./gameScene";
 import { GameOverScene } from "./gameOverScene";
