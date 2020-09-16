@@ -13,7 +13,11 @@ First, clone the repository with the following command
 
 You need to have npm installed on your PC. If you don't, follow this tutorial to install it : https://www.npmjs.com/get-npm
 
-Once it's done, you can load all the needed modules with the command 
+Once it's done, change directory with 
+
+`cd Phaser_Game_Club_Info`
+
+Now you can load all the needed modules with the command 
 
 `npm install`
 
