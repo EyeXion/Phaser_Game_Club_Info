@@ -9,23 +9,31 @@ Coded with **TypeScript** and the framework **Phaser 3**.
 
 First, clone the repository with the following command
 
-`git clone https://github.com/EyeXion/Phaser_Game_Club_Info.git`
+```bash
+git clone https://github.com/EyeXion/Phaser_Game_Club_Info.git
+```
 
 You need to have npm installed on your PC. If you don't, follow this tutorial to install it : https://www.npmjs.com/get-npm
 
 Once it's done, change directory with 
 
-`cd Phaser_Game_Club_Info`
+```bash
+cd Phaser_Game_Club_Info
+```
 
 Now you can load all the needed modules with the command 
 
-`npm install`
+```bash
+npm install
+```
 
 ## PLAY !
 
 Provided that the configuration of the game is done, using the command below should start the game in your default browser on a live server
 
-`npm start`
+```bash
+npm start
+```
 
 **Enjoy !**
 
