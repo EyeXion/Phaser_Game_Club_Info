@@ -5,6 +5,17 @@ You can also play the game on your computer on a live server by following the in
 
 Coded with **TypeScript** and the framework **Phaser 3**. 
 
+## Run with prebuilt (since depracted, just for me and memories haha)
+
+The app.js is in `dist_need_to_rename/`.
+
+In order :
+
+- Clone the repo
+- `npm install`
+- `mv ./dist_need_to_rename/ dist`
+- `npm start`
+
 ## CONFIGURATION
 
 First, clone the repository with the following command
